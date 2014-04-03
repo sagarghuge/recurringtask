@@ -196,6 +196,9 @@ class TaskEditor(object):
         self.textview.set_editable(True)
         self.window.show()
 
+        if self.task.get_recurrence_task() == "R":
+            self.repeattask_button.set_active(True)
+
     # Define accelerator-keys for this dialog
     # TODO: undo/redo
     def init_accelerators(self):
