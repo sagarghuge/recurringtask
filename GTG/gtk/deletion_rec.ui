@@ -68,6 +68,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
+                    <property name="padding">10</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -115,6 +116,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
+                    <property name="padding">10</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -172,6 +174,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
+                    <property name="padding">10</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
