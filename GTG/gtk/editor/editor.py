@@ -72,6 +72,13 @@ class TaskEditor(object):
         self.open_parents_button = self.builder.get_object("open_parents")
         self.repeattask_button = self.builder.get_object("repeattask_toggletoolbutton1")
         self.repeattask_button.set_tooltip_text(GnomeConfig.REPEAT_TASK_TOOLTIP)
+        self.checkbutton1 = self.builder.get_object("checkbutton1")
+        self.checkbutton2 = self.builder.get_object("checkbutton2")
+        self.checkbutton3 = self.builder.get_object("checkbutton3")
+        self.checkbutton4 = self.builder.get_object("checkbutton4")
+        self.checkbutton5 = self.builder.get_object("checkbutton5")
+        self.checkbutton6 = self.builder.get_object("checkbutton6")
+        self.checkbutton7 = self.builder.get_object("checkbutton7")
         
         # Create our dictionary and connect it
         dic = {
@@ -100,10 +107,18 @@ class TaskEditor(object):
             "on_insert_subtask_clicked": self.insert_subtask,
             "on_inserttag_clicked": self.inserttag_clicked,
             "on_repeattask_toggletoolbutton1_toggled" : self.repeattask_toggled,
-            "on_comboboxtext1_changed" : self.comboboxtext1_value_changed,
-            "on_comboboxtext2_move_active" : self.comboboxtext2_move_active,
-            "on_comboboxtext2_changed" : self.comboboxtext2_value_changed,
+            "on_repeats_combobox_value_changed" : self.repeats_combobox_value_changed,
+            "on_end_combobox_value_changed" : self.end_combobox_value_changed,
             "on_open_parent_clicked": self.open_parent_clicked,
+            "on_checkbutton1_toggled" : self.checkbutton_toggled,
+            "on_checkbutton2_toggled" : self.checkbutton_toggled,
+            "on_checkbutton3_toggled" : self.checkbutton_toggled,
+            "on_checkbutton4_toggled" : self.checkbutton_toggled,
+            "on_checkbutton5_toggled" : self.checkbutton_toggled,
+            "on_checkbutton6_toggled" : self.checkbutton_toggled,
+            "on_checkbutton7_toggled" : self.checkbutton_toggled,
+            "on_radiobutton1_group_changed" : self.radiobutton1_group_changed,
+            "on_radiobutton2_group_changed" : self.radiobutton2_group_changed,
             "on_move": self.on_move,
         }
         self.builder.connect_signals(dic)
@@ -531,92 +546,82 @@ class TaskEditor(object):
             self.textview.insert_text(" @", itera)
         self.textview.grab_focus()
 
-    def comboboxtext2_value_changed(self, widget):
+    def update_summary(self, value, add):
+        priv_text = self.builder.get_object("summary_label").get_text()
+        if add:
+            self.builder.get_object("summary_label").set_text(priv_text+","+value)
+        else:
+            #TODO remove the unactive label
+            pass
+    def radiobutton1_group_changed(self, widget):
         pass
-    def comboboxtext2_move_active(self, widget): 
+    def radiobutton2_group_changed(self, widget):
         pass
-
-    def comboboxtext2_fill_contents(self):
-        comboboxtext2 = self.builder.get_object("comboboxtext2")
-        for i in range (1,31):
-            comboboxtext2.append_text(str(i))
-        comboboxtext2.set_active(0)
- 
-    def comboboxtext1_value_changed(self, widget):
+        
+    def checkbutton_toggled(self, widget):
+        if widget.get_active():
+            self.update_summary(widget.get_label(), True)
+        else:
+            self.update_summary(widget.get_label(), False)
+    
+    def end_combobox_value_changed(self, widget):
+        pass
+    
+    def repeats_combobox_value_changed(self, widget):
         index = widget.get_active()
         if index == 0:
-            self.builder.get_object("box9").hide() 
-            self.builder.get_object("label7").hide()
-            self.builder.get_object("comboboxtext2").show() 
+            self.builder.get_object("box8").hide() 
+            #self.builder.get_object("comboboxtext2").show() 
             self.builder.get_object("label5").show()
             self.builder.get_object("label6").set_label("days")
             self.builder.get_object("label6").show()
         elif index == 1:
-            self.builder.get_object("comboboxtext2").hide() 
-            self.builder.get_object("box9").hide() 
-            self.builder.get_object("label7").hide()
-            self.builder.get_object("label5").hide()
-            self.builder.get_object("label6").hide()
-            self.builder.get_object("label11").set_label("Weekly on weekdays")
-        elif index == 2:
-            self.builder.get_object("comboboxtext2").hide() 
-            self.builder.get_object("box9").hide() 
-            self.builder.get_object("label7").hide()
-            self.builder.get_object("label5").hide()
-            self.builder.get_object("label6").hide()
-            self.builder.get_object("label11").set_label("Weekly on Monday, Wednesday, Friday")
-        elif index == 3:
-            self.builder.get_object("comboboxtext2").hide() 
-            self.builder.get_object("box9").hide() 
-            self.builder.get_object("label7").hide()
-            self.builder.get_object("label5").hide()
-            self.builder.get_object("label6").hide()
-            self.builder.get_object("label11").set_label("Weekly on Tuesday, Thursday")
-        elif index == 4:
-            self.builder.get_object("box9").show() 
-            self.builder.get_object("label7").show()
-            self.builder.get_object("comboboxtext2").show() 
+            self.builder.get_object("box8").show() 
+            #self.builder.get_object("comboboxtext2").show() 
             self.builder.get_object("label5").show()
             self.builder.get_object("label6").set_label("weeks")
             self.builder.get_object("label6").show()
-        elif index == 5:
-            self.builder.get_object("comboboxtext2").show() 
+        elif index == 2:
+            #self.builder.get_object("comboboxtext2").show() 
+            self.builder.get_object("box8").hide() 
             self.builder.get_object("label5").show()
             self.builder.get_object("label6").set_label("months")
             self.builder.get_object("label6").show()
-        elif index == 6:
-            self.builder.get_object("box9").hide() 
-            self.builder.get_object("label7").hide()
-            self.builder.get_object("comboboxtext2").show() 
+        elif index == 3:
+            self.builder.get_object("box8").hide() 
+            #self.builder.get_object("comboboxtext2").show() 
             self.builder.get_object("label5").show()
             self.builder.get_object("label6").set_label("years")
             self.builder.get_object("label6").show()
              
-    def comboboxtext1_fill_contents(self):
-        combo = self.builder.get_object("comboboxtext1")
+    def repeats_combobox_fill_contents(self):
+        combo = self.builder.get_object("repeats_combobox")
         combo.append_text("Daily")
-        combo.append_text("Every weekday (Monday to Friday)")
-        combo.append_text("Every Monday, Wednesday, and Friday")
-        combo.append_text("Every Tuesday, and Thursday")
         combo.append_text("Weekly")
         combo.append_text("Monthly")
         combo.append_text("Yearly")
         combo.set_active(0)
- 
+
+    def end_combobox_fill_contents(self):
+        combo = self.builder.get_object("end_combobox")
+        combo.append_text("Forever")
+        combo.append_text("Until a date")
+        combo.append_text("For a number of events")
+        combo.set_active(0)
+
     def repeattask_toggled(self, widget):
         if widget.get_active():
-            self.comboboxtext1_fill_contents()
-            self.comboboxtext2_fill_contents()
+            self.repeats_combobox_fill_contents()
+            self.end_combobox_fill_contents()
             self.task.recurringtask = 'R'
             self.builder.get_object("repeattaskbox").show()
-            self.builder.get_object("box8").show()
+            self.builder.get_object("box6").show()
             self.builder.get_object("box12").show()
         else:
             self.task.recurringtask = ''
-            self.builder.get_object("comboboxtext1").remove_all()
-            self.builder.get_object("comboboxtext2").remove_all()
+            self.builder.get_object("repeats_combobox").remove_all()
             self.builder.get_object("repeattaskbox").hide()
-            self.builder.get_object("box8").hide()
+            self.builder.get_object("box6").hide()
             self.builder.get_object("box12").hide()
 
     def inserttag(self, widget, tag):
