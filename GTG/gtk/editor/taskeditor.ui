@@ -483,6 +483,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="every_label">
+                <property name="width_request">41</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0</property>
@@ -495,7 +496,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="padding">3</property>
+                <property name="padding">2</property>
                 <property name="position">2</property>
               </packing>
             </child>
@@ -505,7 +506,7 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkSpinButton" id="every_spinbutton">
-                    <property name="width_request">130</property>
+                    <property name="width_request">131</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="adjustment">adjustment1</property>
@@ -803,6 +804,7 @@
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkSpinButton" id="spinbutton1">
+                        <property name="width_request">131</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="width_chars">7</property>
@@ -812,7 +814,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="padding">8</property>
+                        <property name="padding">6</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -828,7 +830,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="padding">5</property>
+                        <property name="padding">8</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
