@@ -109,6 +109,7 @@ class TaskEditor(object):
             "on_repeattask_toggletoolbutton1_toggled" : self.repeattask_toggled,
             "on_repeats_combobox_value_changed" : self.repeats_combobox_value_changed,
             "on_end_combobox_value_changed" : self.end_combobox_value_changed,
+            "on_every_spinbutton_value_changed" : self.every_spinbutton_value_changed,
             "on_open_parent_clicked": self.open_parent_clicked,
             "on_checkbutton1_toggled" : self.checkbutton_toggled,
             "on_checkbutton2_toggled" : self.checkbutton_toggled,
@@ -117,8 +118,6 @@ class TaskEditor(object):
             "on_checkbutton5_toggled" : self.checkbutton_toggled,
             "on_checkbutton6_toggled" : self.checkbutton_toggled,
             "on_checkbutton7_toggled" : self.checkbutton_toggled,
-            "on_radiobutton1_group_changed" : self.radiobutton1_group_changed,
-            "on_radiobutton2_group_changed" : self.radiobutton2_group_changed,
             "on_move": self.on_move,
         }
         self.builder.connect_signals(dic)
@@ -553,10 +552,6 @@ class TaskEditor(object):
         else:
             #TODO remove the unactive label
             pass
-    def radiobutton1_group_changed(self, widget):
-        pass
-    def radiobutton2_group_changed(self, widget):
-        pass
         
     def checkbutton_toggled(self, widget):
         if widget.get_active():
@@ -564,64 +559,76 @@ class TaskEditor(object):
         else:
             self.update_summary(widget.get_label(), False)
     
+    def replace_widget(self, current, new):
+        container = current.get_parent()
+        assert container
+
+        Gtk.Container.remove(container, current)
+        new.show()
+        container.add(new)
+        
+        #for name, value in props.items():
+        #    container.child_set_property(new, name, value)
+
     def end_combobox_value_changed(self, widget):
-        pass
-    
+        index = widget.get_active()
+        if index == 0:
+            self.builder.get_object("box11").show()
+        elif index == 1:
+            until_entry = Gtk.Entry()
+            current = self.builder.get_object("spinbutton1")
+            self.builder.get_object("label5").hide()
+            self.replace_widget(current, until_entry)
+        elif index == 2:
+            self.builder.get_object("box11").hide() 
+    def every_spinbutton_value_changed(self, widget):
+        self.set_label_value()
+
+    def set_label_value(self):
+        label = self.builder.get_object("common_label")
+        label_text = label.get_text()
+        spinbutton = self.builder.get_object("every_spinbutton")
+        if spinbutton.get_value_as_int() > 1:
+            if label_text.__contains__("s"):
+                return
+            label.set_text('')
+            label.set_text(label_text+"s")
+        else:
+            label.set_text('')
+            label.set_text(label_text.strip("s"))
+                
     def repeats_combobox_value_changed(self, widget):
         index = widget.get_active()
         if index == 0:
             self.builder.get_object("box8").hide() 
-            #self.builder.get_object("comboboxtext2").show() 
-            self.builder.get_object("label5").show()
-            self.builder.get_object("label6").set_label("days")
-            self.builder.get_object("label6").show()
+            self.builder.get_object("box13").hide() 
+            self.builder.get_object("common_label").set_text("day")
         elif index == 1:
             self.builder.get_object("box8").show() 
-            #self.builder.get_object("comboboxtext2").show() 
-            self.builder.get_object("label5").show()
-            self.builder.get_object("label6").set_label("weeks")
-            self.builder.get_object("label6").show()
+            self.builder.get_object("box13").hide() 
+            self.builder.get_object("common_label").set_text("week")
         elif index == 2:
-            #self.builder.get_object("comboboxtext2").show() 
             self.builder.get_object("box8").hide() 
-            self.builder.get_object("label5").show()
-            self.builder.get_object("label6").set_label("months")
-            self.builder.get_object("label6").show()
+            self.builder.get_object("box13").show() 
+            self.builder.get_object("common_label").set_text("month")
         elif index == 3:
             self.builder.get_object("box8").hide() 
-            #self.builder.get_object("comboboxtext2").show() 
-            self.builder.get_object("label5").show()
-            self.builder.get_object("label6").set_label("years")
-            self.builder.get_object("label6").show()
-             
-    def repeats_combobox_fill_contents(self):
-        combo = self.builder.get_object("repeats_combobox")
-        combo.append_text("Daily")
-        combo.append_text("Weekly")
-        combo.append_text("Monthly")
-        combo.append_text("Yearly")
-        combo.set_active(0)
-
-    def end_combobox_fill_contents(self):
-        combo = self.builder.get_object("end_combobox")
-        combo.append_text("Forever")
-        combo.append_text("Until a date")
-        combo.append_text("For a number of events")
-        combo.set_active(0)
-
+            self.builder.get_object("box13").hide() 
+            self.builder.get_object("common_label").set_text("year")
+        self.set_label_value()
+     
     def repeattask_toggled(self, widget):
         if widget.get_active():
-            self.repeats_combobox_fill_contents()
-            self.end_combobox_fill_contents()
             self.task.recurringtask = 'R'
             self.builder.get_object("repeattaskbox").show()
+            self.builder.get_object("end_combobox").set_row_span_column(0)
             self.builder.get_object("box6").show()
             self.builder.get_object("box12").show()
         else:
             self.task.recurringtask = ''
-            self.builder.get_object("repeats_combobox").remove_all()
             self.builder.get_object("repeattaskbox").hide()
             self.builder.get_object("box6").hide()
+            self.builder.get_object("box8").hide()
             self.builder.get_object("box12").hide()
 
     def inserttag(self, widget, tag):

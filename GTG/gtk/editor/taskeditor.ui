@@ -7,10 +7,15 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="adjustment2">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkWindow" id="TaskEditor">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Task</property>
-    <property name="default_width">500</property>
+    <property name="default_width">550</property>
     <property name="default_height">400</property>
     <signal name="configure-event" handler="on_move" swapped="no"/>
     <child>
@@ -268,6 +273,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
+                <property name="padding">5</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -449,16 +455,22 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkComboBoxText" id="repeats_combobox">
-                    <property name="width_request">130</property>
+                    <property name="width_request">131</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="active">0</property>
+                    <items>
+                      <item translatable="yes">Daily</item>
+                      <item translatable="yes">Weekly</item>
+                      <item translatable="yes">Monthly</item>
+                      <item translatable="yes">Yearly</item>
+                    </items>
                     <signal name="changed" handler="on_repeats_combobox_value_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="padding">8</property>
+                    <property name="padding">13</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -470,7 +482,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label5">
+              <object class="GtkLabel" id="every_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0</property>
@@ -492,13 +504,14 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkSpinButton" id="spinbutton1">
+                  <object class="GtkSpinButton" id="every_spinbutton">
                     <property name="width_request">130</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="adjustment">adjustment1</property>
                     <property name="climb_rate">1</property>
                     <property name="numeric">True</property>
+                    <signal name="value-changed" handler="on_every_spinbutton_value_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -515,10 +528,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label6">
+              <object class="GtkLabel" id="common_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0</property>
+                <property name="label" translatable="yes">day</property>
                 <property name="ellipsize">start</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -527,7 +541,6 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="padding">10</property>
                 <property name="position">4</property>
               </packing>
             </child>
@@ -542,7 +555,7 @@
           <object class="GtkBox" id="box8">
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkLabel" id="label7">
+              <object class="GtkLabel" id="repeat_on_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Repeat on</property>
@@ -563,7 +576,7 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkCheckButton" id="checkbutton1">
-                    <property name="label" translatable="yes">S</property>
+                    <property name="label" translatable="yes">Sun</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -580,7 +593,7 @@
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="checkbutton2">
-                    <property name="label" translatable="yes">M</property>
+                    <property name="label" translatable="yes">Mon</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -591,12 +604,13 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="padding">5</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="checkbutton3">
-                    <property name="label" translatable="yes">T</property>
+                    <property name="label" translatable="yes">Tue</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -607,12 +621,13 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="padding">5</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="checkbutton4">
-                    <property name="label" translatable="yes">W</property>
+                    <property name="label" translatable="yes">Wed</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -623,12 +638,14 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="padding">5</property>
                     <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="checkbutton5">
-                    <property name="label" translatable="yes">T</property>
+                    <property name="label" translatable="yes">Thu</property>
+                    <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
@@ -638,12 +655,13 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="padding">5</property>
                     <property name="position">4</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="checkbutton6">
-                    <property name="label" translatable="yes">F</property>
+                    <property name="label" translatable="yes">Fri</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -654,12 +672,13 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="padding">5</property>
                     <property name="position">5</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="checkbutton7">
-                    <property name="label" translatable="yes">S</property>
+                    <property name="label" translatable="yes">Sat</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -670,6 +689,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="padding">5</property>
                     <property name="position">6</property>
                   </packing>
                 </child>
@@ -688,13 +708,60 @@
           </packing>
         </child>
         <child>
+          <object class="GtkBox" id="box13">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkRadioButton" id="radiobutton1">
+                <property name="label" translatable="yes">on the same day each month</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="xalign">0</property>
+                <property name="active">True</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">radiobutton2</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">10</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkRadioButton" id="radiobutton2">
+                <property name="label" translatable="yes">on every first sunday</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="xalign">0</property>
+                <property name="active">True</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">radiobutton1</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="padding">1</property>
+            <property name="position">6</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkBox" id="box6">
             <property name="can_focus">False</property>
             <child>
               <object class="GtkLabel" id="end_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Ends :</property>
+                <property name="label" translatable="yes">Ends</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -712,17 +779,21 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkComboBoxText" id="end_combobox">
-                    <property name="width_request">128</property>
+                    <property name="width_request">131</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="active">0</property>
-                    <property name="has_frame">False</property>
+                    <items>
+                      <item translatable="yes">For</item>
+                      <item translatable="yes">Until</item>
+                      <item translatable="yes">Forever</item>
+                    </items>
                     <signal name="changed" handler="on_end_combobox_value_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="padding">20</property>
+                    <property name="padding">26</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -730,10 +801,42 @@
                   <object class="GtkBox" id="box11">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkSpinButton" id="spinbutton1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="width_chars">7</property>
+                        <property name="adjustment">adjustment2</property>
+                        <property name="climb_rate">1</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="padding">8</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label5">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">occurrences</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="padding">5</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="padding">40</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -741,6 +844,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
+                <property name="padding">8</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -748,7 +852,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">6</property>
+            <property name="position">7</property>
           </packing>
         </child>
         <child>
@@ -756,10 +860,10 @@
             <property name="can_focus">False</property>
             <property name="margin_top">6</property>
             <child>
-              <object class="GtkLabel" id="label10">
+              <object class="GtkLabel" id="summary_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Summary :</property>
+                <property name="label" translatable="yes">Summary</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -772,7 +876,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="summary_label">
+              <object class="GtkLabel" id="show_summary_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="ellipsize">start</property>
@@ -791,7 +895,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">7</property>
+            <property name="position">8</property>
           </packing>
         </child>
       </object>
@@ -892,9 +996,13 @@
       </object>
     </child>
   </object>
-  <object class="GtkAdjustment" id="adjustment2">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+  <object class="GtkRadioButton" id="radiobutton3">
+    <property name="label" translatable="yes">radiobutton</property>
+    <property name="visible">True</property>
+    <property name="can_focus">True</property>
+    <property name="receives_default">False</property>
+    <property name="xalign">0</property>
+    <property name="active">True</property>
+    <property name="draw_indicator">True</property>
   </object>
 </interface>
