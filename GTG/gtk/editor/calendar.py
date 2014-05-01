@@ -32,6 +32,7 @@ class GTGCalendar(GObject.GObject):
     DATE_KIND_DUE = "due"
     DATE_KIND_START = "start"
     DATE_KIND_CLOSED = "closed"
+    DATE_KIND_ENDON = "endon"
 
     #Gobject signal description
     __signal_type__ = (GObject.SignalFlags.RUN_FIRST,

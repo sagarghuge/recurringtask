@@ -91,6 +91,8 @@ class TaskEditor(object):
                 w, GTGCalendar.DATE_KIND_START),
             "on_closeddate_pressed": lambda w: self.on_date_pressed(
                 w, GTGCalendar.DATE_KIND_CLOSED),
+            "on_endondate_pressed": lambda w: self.on_date_pressed(
+                w, GTGCalendar.DATE_KIND_ENDON),
             "close_clicked": self.close,
             "duedate_changed": lambda w: self.date_changed(
                 w, GTGCalendar.DATE_KIND_DUE),
@@ -104,6 +106,10 @@ class TaskEditor(object):
                 w, GTGCalendar.DATE_KIND_CLOSED),
             "closeddate_focus_out": lambda w, e: self.date_focus_out(
                 w, e, GTGCalendar.DATE_KIND_CLOSED),
+            "endondate_changed": lambda w: self.date_changed(
+                w, GTGCalendar.DATE_KIND_ENDON),
+            "endondate_focus_out": lambda w, e: self.date_focus_out(
+                w, e, GTGCalendar.DATE_KIND_ENDON),
             "on_insert_subtask_clicked": self.insert_subtask,
             "on_inserttag_clicked": self.inserttag_clicked,
             "on_repeattask_toggletoolbutton1_toggled" : self.repeattask_toggled,
@@ -559,28 +565,19 @@ class TaskEditor(object):
         else:
             self.update_summary(widget.get_label(), False)
     
-    def replace_widget(self, current, new):
-        container = current.get_parent()
-        assert container
-
-        Gtk.Container.remove(container, current)
-        new.show()
-        container.add(new)
-        
-        #for name, value in props.items():
-        #    container.child_set_property(new, name, value)
-
     def end_combobox_value_changed(self, widget):
         index = widget.get_active()
         if index == 0:
+            self.builder.get_object("endafter_spinbutton").show()
             self.builder.get_object("box11").show()
+            self.builder.get_object("endon_box").hide()
         elif index == 1:
-            until_entry = Gtk.Entry()
-            current = self.builder.get_object("spinbutton1")
-            self.builder.get_object("label5").hide()
-            self.replace_widget(current, until_entry)
+            self.builder.get_object("endafter_spinbutton").hide()
+            self.builder.get_object("box11").show()
+            self.builder.get_object("endon_box").show()
         elif index == 2:
-            self.builder.get_object("box11").hide() 
+            self.builder.get_object("box11").hide()
+ 
     def every_spinbutton_value_changed(self, widget):
         self.set_label_value()
 
