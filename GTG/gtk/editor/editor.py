@@ -591,10 +591,8 @@ class TaskEditor(object):
         if spinbutton.get_value_as_int() > 1:
             if label_text.__contains__("s"):
                 return
-            label.set_text('')
             label.set_text(label_text+"s")
         else:
-            label.set_text('')
             label.set_text(label_text.strip("s"))
                 
     def repeats_combobox_value_changed(self, widget):
