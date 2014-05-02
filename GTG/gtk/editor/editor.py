@@ -116,6 +116,7 @@ class TaskEditor(object):
             "on_repeats_combobox_value_changed" : self.repeats_combobox_value_changed,
             "on_end_combobox_value_changed" : self.end_combobox_value_changed,
             "on_every_spinbutton_value_changed" : self.every_spinbutton_value_changed,
+            "on_endafter_spinbutton_value_changed" : self.endafter_spinbutton_value_changed,
             "on_open_parent_clicked": self.open_parent_clicked,
             "on_checkbutton1_toggled" : self.checkbutton_toggled,
             "on_checkbutton2_toggled" : self.checkbutton_toggled,
@@ -151,6 +152,7 @@ class TaskEditor(object):
         self.duedate_widget = self.builder.get_object("duedate_entry")
         self.startdate_widget = self.builder.get_object("startdate_entry")
         self.closeddate_widget = self.builder.get_object("closeddate_entry")
+        self.endondate_widget = self.builder.get_object("endondate_entry")
         self.dayleft_label = self.builder.get_object("dayleft")
         self.tasksidebar = self.builder.get_object("tasksidebar")
         # Define accelerator keys
@@ -329,12 +331,16 @@ class TaskEditor(object):
         duedate = self.task.get_due_date()
         try:
             prevdate = Date.parse(self.duedate_widget.get_text())
+            endon_prevdate = Date.parse(self.endondate_widget.get_text())
             update_date = duedate != prevdate
+            update_endondate = duedate != endon_prevdate
         except ValueError:
             update_date = True
 
         if update_date:
             self.duedate_widget.set_text(str(duedate))
+        if update_endondate:
+            self.endondate_widget.set_text(str(duedate))
 
         # refreshing the closed date field
         closeddate = self.task.get_closed_date()
@@ -451,6 +457,8 @@ class TaskEditor(object):
                 self.task.set_due_date(datetoset)
             elif date_kind == GTGCalendar.DATE_KIND_CLOSED:
                 self.task.set_closed_date(datetoset)
+            elif date_kind == GTGCalendar.DATE_KIND_ENDOENDON:
+                self.task.set_due_date(datetoset)
             self.refresh_editor()
 
     def on_date_pressed(self, widget, date_kind):
@@ -464,6 +472,11 @@ class TaskEditor(object):
             date = self.task.get_start_date()
         elif date_kind == GTGCalendar.DATE_KIND_CLOSED:
             date = self.task.get_closed_date()
+        if date_kind == GTGCalendar.DATE_KIND_ENDON:
+            if not self.task.get_due_date():
+                date = self.task.get_start_date()
+            else:
+                date = self.task.get_due_date()
         self.calendar.set_date(date, date_kind)
         # we show the calendar at the right position
         rect = widget.get_allocation()
@@ -479,6 +492,8 @@ class TaskEditor(object):
             self.task.set_start_date(date)
         elif date_kind == GTGCalendar.DATE_KIND_CLOSED:
             self.task.set_closed_date(date)
+        elif date_kind == GTGCalendar.DATE_KIND_ENDON:
+            self.task.set_due_date(date)
         self.refresh_editor()
 
     def close_all_subtasks(self):
@@ -581,12 +596,17 @@ class TaskEditor(object):
             self.builder.get_object("box11").hide()
  
     def every_spinbutton_value_changed(self, widget):
-        self.set_label_value()
-
-    def set_label_value(self):
         label = self.builder.get_object("common_label")
-        label_text = label.get_text()
         spinbutton = self.builder.get_object("every_spinbutton")
+        self.set_label_value(label, spinbutton)
+
+    def endafter_spinbutton_value_changed(self, widget):
+        label = self.builder.get_object("occurrence_label")
+        spinbutton = self.builder.get_object("endafter_spinbutton")
+        self.set_label_value(label, spinbutton)
+
+    def set_label_value(self, label, spinbutton):
+        label_text = label.get_text()
         if spinbutton.get_value_as_int() > 1:
             if label_text.__contains__("s"):
                 return
@@ -596,6 +616,8 @@ class TaskEditor(object):
                 
     def repeats_combobox_value_changed(self, widget):
         index = widget.get_active()
+        label = self.builder.get_object("common_label")
+        spinbutton = self.builder.get_object("every_spinbutton")
         if index == 0:
             self.builder.get_object("box8").hide() 
             self.builder.get_object("box13").hide() 
@@ -612,7 +634,7 @@ class TaskEditor(object):
             self.builder.get_object("box8").hide() 
             self.builder.get_object("box13").hide() 
             self.builder.get_object("common_label").set_text("year")
-        self.set_label_value()
+        self.set_label_value(label, spinbutton)
      
     def repeattask_toggled(self, widget):
         if widget.get_active():

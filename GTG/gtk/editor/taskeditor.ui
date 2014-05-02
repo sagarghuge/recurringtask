@@ -849,10 +849,10 @@
                     <property name="width_request">131</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="width_chars">7</property>
                     <property name="adjustment">adjustment2</property>
                     <property name="climb_rate">1</property>
                     <property name="numeric">True</property>
+                    <signal name="value-changed" handler="on_endafter_spinbutton_value_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -909,7 +909,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="yalign">0.46000000834465027</property>
-                    <property name="label" translatable="yes">occurrences</property>
+                    <property name="label" translatable="yes">occurrence</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
