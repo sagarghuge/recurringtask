@@ -568,13 +568,15 @@ class TaskEditor(object):
     def end_combobox_value_changed(self, widget):
         index = widget.get_active()
         if index == 0:
+            self.builder.get_object("box11").show()
             self.builder.get_object("endafter_spinbutton").show()
-            self.builder.get_object("box11").show()
-            self.builder.get_object("endon_box").hide()
+            self.builder.get_object("endonbox").hide()
+            self.builder.get_object("occurrence_label").show()
         elif index == 1:
-            self.builder.get_object("endafter_spinbutton").hide()
             self.builder.get_object("box11").show()
-            self.builder.get_object("endon_box").show()
+            self.builder.get_object("endafter_spinbutton").hide()
+            self.builder.get_object("endonbox").show()
+            self.builder.get_object("occurrence_label").hide()
         elif index == 2:
             self.builder.get_object("box11").hide()
  
