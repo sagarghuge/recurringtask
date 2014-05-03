@@ -118,13 +118,6 @@ class TaskEditor(object):
             "on_every_spinbutton_value_changed" : self.every_spinbutton_value_changed,
             "on_endafter_spinbutton_value_changed" : self.endafter_spinbutton_value_changed,
             "on_open_parent_clicked": self.open_parent_clicked,
-            "on_checkbutton1_toggled" : self.checkbutton_toggled,
-            "on_checkbutton2_toggled" : self.checkbutton_toggled,
-            "on_checkbutton3_toggled" : self.checkbutton_toggled,
-            "on_checkbutton4_toggled" : self.checkbutton_toggled,
-            "on_checkbutton5_toggled" : self.checkbutton_toggled,
-            "on_checkbutton6_toggled" : self.checkbutton_toggled,
-            "on_checkbutton7_toggled" : self.checkbutton_toggled,
             "on_move": self.on_move,
         }
         self.builder.connect_signals(dic)
@@ -580,12 +573,6 @@ class TaskEditor(object):
             #TODO remove the unactive label
             pass
         
-    def checkbutton_toggled(self, widget):
-        if widget.get_active():
-            self.update_summary(widget.get_label(), True)
-        else:
-            self.update_summary(widget.get_label(), False)
-    
     def end_combobox_value_changed(self, widget):
         index = widget.get_active()
         if index == 0:
