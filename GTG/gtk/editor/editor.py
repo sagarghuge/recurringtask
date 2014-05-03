@@ -331,17 +331,23 @@ class TaskEditor(object):
         duedate = self.task.get_due_date()
         try:
             prevdate = Date.parse(self.duedate_widget.get_text())
-            endon_prevdate = Date.parse(self.endondate_widget.get_text())
             update_date = duedate != prevdate
-            update_endondate = duedate != endon_prevdate
         except ValueError:
             update_date = True
 
         if update_date:
             self.duedate_widget.set_text(str(duedate))
-        if update_endondate:
-            self.endondate_widget.set_text(str(duedate))
 
+        endondate = self.task.get_endon_date()
+        try:
+            prevdate = Date.parse(self.endondate_widget.get_text())
+            update_date = endondate != prevdate
+        except ValueError:
+            update_date = True
+
+        if update_date:
+            self.endondate_widget.set_text(str(endondate))
+        
         # refreshing the closed date field
         closeddate = self.task.get_closed_date()
         prevcldate = Date.parse(self.closeddate_widget.get_text())
@@ -457,7 +463,7 @@ class TaskEditor(object):
                 self.task.set_due_date(datetoset)
             elif date_kind == GTGCalendar.DATE_KIND_CLOSED:
                 self.task.set_closed_date(datetoset)
-            elif date_kind == GTGCalendar.DATE_KIND_ENDOENDON:
+            elif date_kind == GTGCalendar.DATE_KIND_ENDON:
                 self.task.set_due_date(datetoset)
             self.refresh_editor()
 
@@ -473,10 +479,10 @@ class TaskEditor(object):
         elif date_kind == GTGCalendar.DATE_KIND_CLOSED:
             date = self.task.get_closed_date()
         if date_kind == GTGCalendar.DATE_KIND_ENDON:
-            if not self.task.get_due_date():
+            if not self.task.get_endon_date():
                 date = self.task.get_start_date()
             else:
-                date = self.task.get_due_date()
+                date = self.task.get_endon_date()
         self.calendar.set_date(date, date_kind)
         # we show the calendar at the right position
         rect = widget.get_allocation()
@@ -493,7 +499,7 @@ class TaskEditor(object):
         elif date_kind == GTGCalendar.DATE_KIND_CLOSED:
             self.task.set_closed_date(date)
         elif date_kind == GTGCalendar.DATE_KIND_ENDON:
-            self.task.set_due_date(date)
+            self.task.set_endon_date(date)
         self.refresh_editor()
 
     def close_all_subtasks(self):

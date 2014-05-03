@@ -58,6 +58,7 @@ class Task(TreeNode):
         self.closed_date = Date.no_date()
         self.due_date = Date.no_date()
         self.start_date = Date.no_date()
+        self.endon_date = Date.no_date()
         self.can_be_deleted = newtask
         self.recurringtask = None
         # tags
@@ -365,6 +366,15 @@ class Task(TreeNode):
     def get_due_date(self):
         """ Returns the due date, which always respects all constraints """
         return self.due_date
+
+    def set_endon_date(self, new_endondate):
+        old_endon_date = self.endon_date
+        new_endondate_obj = Date(new_endondate)  
+        self.endon_date = new_endondate_obj
+
+    def get_endon_date(self):
+        """ Returns the endon date, which always respects all constraints """
+        return self.endon_date
 
     def get_urgent_date(self):
         """ Returns the most urgent due date among the tasks and its subtasks
