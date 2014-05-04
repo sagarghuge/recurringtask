@@ -72,13 +72,6 @@ class TaskEditor(object):
         self.open_parents_button = self.builder.get_object("open_parents")
         self.repeattask_button = self.builder.get_object("repeattask_toggletoolbutton1")
         self.repeattask_button.set_tooltip_text(GnomeConfig.REPEAT_TASK_TOOLTIP)
-        self.checkbutton1 = self.builder.get_object("checkbutton1")
-        self.checkbutton2 = self.builder.get_object("checkbutton2")
-        self.checkbutton3 = self.builder.get_object("checkbutton3")
-        self.checkbutton4 = self.builder.get_object("checkbutton4")
-        self.checkbutton5 = self.builder.get_object("checkbutton5")
-        self.checkbutton6 = self.builder.get_object("checkbutton6")
-        self.checkbutton7 = self.builder.get_object("checkbutton7")
         
         # Create our dictionary and connect it
         dic = {
@@ -311,35 +304,15 @@ class TaskEditor(object):
 
         # refreshing the start date field
         startdate = self.task.get_start_date()
-        try:
-            prevdate = Date.parse(self.startdate_widget.get_text())
-            update_date = startdate != prevdate
-        except ValueError:
-            update_date = True
-
-        if update_date:
-            self.startdate_widget.set_text(str(startdate))
+        self.refresh_date_field(startdate, self.startdate_widget)
 
         # refreshing the due date field
         duedate = self.task.get_due_date()
-        try:
-            prevdate = Date.parse(self.duedate_widget.get_text())
-            update_date = duedate != prevdate
-        except ValueError:
-            update_date = True
+        self.refresh_date_field(duedate, self.duedate_widget)
 
-        if update_date:
-            self.duedate_widget.set_text(str(duedate))
-
+        # refreshing the endon date field
         endondate = self.task.get_endon_date()
-        try:
-            prevdate = Date.parse(self.endondate_widget.get_text())
-            update_date = endondate != prevdate
-        except ValueError:
-            update_date = True
-
-        if update_date:
-            self.endondate_widget.set_text(str(endondate))
+        self.refresh_date_field(endondate, self.endondate_widget)
         
         # refreshing the closed date field
         closeddate = self.task.get_closed_date()
@@ -421,6 +394,16 @@ class TaskEditor(object):
         if to_save:
             self.light_save()
 
+    def refresh_date_field(self, date, field):
+        try:
+            prevdate = Date.parse(field.get_text())
+            update_date = date != prevdate
+        except ValueError:
+            update_date = True
+
+        if update_date:
+            field.set_text(str(date))
+        
     def date_changed(self, widget, data):
         try:
             Date.parse(widget.get_text())
