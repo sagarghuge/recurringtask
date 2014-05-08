@@ -58,6 +58,7 @@ class TaskEditor(object):
         self.vmanager = vmanager
         self.config = taskconfig
         self.time = None
+        self.plural = False
         self.clipboard = clipboard
         self.builder = Gtk.Builder()
         self.builder.add_from_file(GnomeConfig.EDITOR_UI_FILE)
@@ -313,7 +314,7 @@ class TaskEditor(object):
         # refreshing the endon date field
         endondate = self.task.get_endon_date()
         self.refresh_date_field(endondate, self.endondate_widget)
-        
+
         # refreshing the closed date field
         closeddate = self.task.get_closed_date()
         prevcldate = Date.parse(self.closeddate_widget.get_text())
@@ -400,10 +401,9 @@ class TaskEditor(object):
             update_date = date != prevdate
         except ValueError:
             update_date = True
-
         if update_date:
             field.set_text(str(date))
-        
+
     def date_changed(self, widget, data):
         try:
             Date.parse(widget.get_text())
@@ -442,6 +442,7 @@ class TaskEditor(object):
             elif date_kind == GTGCalendar.DATE_KIND_ENDON:
                 self.task.set_due_date(datetoset)
             self.refresh_editor()
+            self.update_summary()
 
     def on_date_pressed(self, widget, date_kind):
         """Called when a date-changing button is clicked."""
@@ -459,12 +460,14 @@ class TaskEditor(object):
                 date = self.task.get_start_date()
             else:
                 date = self.task.get_endon_date()
+        self.update_summary()
         self.calendar.set_date(date, date_kind)
         # we show the calendar at the right position
         rect = widget.get_allocation()
         result, x, y = widget.get_window().get_origin()
         self.calendar.show_at_position(x + rect.x + rect.width,
                                        y + rect.y)
+
 
     def on_date_changed(self, calendar):
         date, date_kind = calendar.get_selected_date()
@@ -477,6 +480,7 @@ class TaskEditor(object):
         elif date_kind == GTGCalendar.DATE_KIND_ENDON:
             self.task.set_endon_date(date)
         self.refresh_editor()
+        self.update_summary()
 
     def close_all_subtasks(self):
         all_subtasks = []
@@ -548,14 +552,41 @@ class TaskEditor(object):
             self.textview.insert_text(" @", itera)
         self.textview.grab_focus()
 
-    def update_summary(self, value, add):
-        priv_text = self.builder.get_object("summary_label").get_text()
-        if add:
-            self.builder.get_object("summary_label").set_text(priv_text+","+value)
+    def update_summary(self):
+        repeat_txt = self.builder.get_object(
+            "repeats_combobox").get_active_text()
+        every_val = self.builder.get_object(
+            "every_spinbutton").get_value_as_int()
+        end_txt = self.builder.get_object(
+            "end_combobox").get_active_text()
+
+        sum_txt = None
+        if every_val < 1:
+            if repeat_txt == "Daily":
+                sum_txt = repeat_txt
+            elif repeat_txt == "Yearly":
+                sum_txt = "Anually on"
+            else:
+                sum_txt = repeat_txt
         else:
-            #TODO remove the unactive label
-            pass
-        
+            sum_txt = "Every " + str(every_val) + " " +\
+                self.builder.get_object("common_label").\
+                get_text()
+
+        if end_txt == "After":
+            occ_val = self.builder.get_object(
+                "endafter_spinbutton").get_value_as_int()
+            if occ_val > 1:
+                sum_txt = sum_txt + ", " + str(occ_val) + " times"
+        elif end_txt == "On":
+            endondate_txt = self.builder.get_object(
+                "endondate_entry").get_text()
+            if endondate_txt != "":
+                sum_txt = sum_txt + ", until " + str(endondate_txt)
+
+        self.builder.get_object("show_summary_label").\
+            set_text(sum_txt)
+
     def end_combobox_value_changed(self, widget):
         index = widget.get_active()
         if index == 0:
@@ -570,16 +601,19 @@ class TaskEditor(object):
             self.builder.get_object("occurrence_label").hide()
         elif index == 2:
             self.builder.get_object("box11").hide()
- 
+        self.update_summary()
+
     def every_spinbutton_value_changed(self, widget):
         label = self.builder.get_object("common_label")
         spinbutton = self.builder.get_object("every_spinbutton")
         self.set_label_value(label, spinbutton)
+        self.update_summary()
 
     def endafter_spinbutton_value_changed(self, widget):
         label = self.builder.get_object("occurrence_label")
         spinbutton = self.builder.get_object("endafter_spinbutton")
         self.set_label_value(label, spinbutton)
+        self.update_summary()
 
     def set_label_value(self, label, spinbutton):
         label_text = label.get_text()
@@ -589,7 +623,7 @@ class TaskEditor(object):
             label.set_text(label_text+"s")
         else:
             label.set_text(label_text.strip("s"))
-                
+
     def repeats_combobox_value_changed(self, widget):
         index = widget.get_active()
         label = self.builder.get_object("common_label")
@@ -611,7 +645,8 @@ class TaskEditor(object):
             self.builder.get_object("box13").hide() 
             self.builder.get_object("common_label").set_text("year")
         self.set_label_value(label, spinbutton)
-     
+        self.update_summary()
+
     def repeattask_toggled(self, widget):
         if widget.get_active():
             self.task.recurringtask = 'R'
