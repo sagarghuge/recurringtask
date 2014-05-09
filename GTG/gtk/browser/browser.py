@@ -1101,7 +1101,6 @@ class TaskBrowser(GObject.GObject):
     def on_set_due_next_year(self, widget):
         self.update_due_date(widget, "next year")
 
-
     def on_set_due_soon(self, widget):
         self.update_due_date(widget, "soon")
 

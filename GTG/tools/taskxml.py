@@ -117,7 +117,7 @@ def task_to_xml(doc, task):
     t_xml.setAttribute("status", task.get_status())
     t_xml.setAttribute("uuid", task.get_uuid())
     t_xml.setAttribute("recurring", task.get_recurrence_task())
-    
+
     tags_str = ""
     for tag in task.get_tags_name():
         tags_str = tags_str + saxutils.escape(str(tag)) + ","

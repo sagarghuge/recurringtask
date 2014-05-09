@@ -33,6 +33,7 @@ from GTG.tools.logger import Log
 from liblarch import TreeNode
 from GTG.tools.tags import extract_tags_from_text
 
+
 class Task(TreeNode):
     """ This class represent a task in GTG.
     You should never create a Task directly. Use the datastore.new_task()
@@ -397,7 +398,7 @@ class Task(TreeNode):
             return child_list
 
         old_endon_date = self.endon_date
-        new_endondate_obj = Date(new_endondate)  
+        new_endondate_obj = Date(new_endondate)
         self.endon_date = new_endondate_obj
         if not new_endondate_obj.is_fuzzy():
             # if the task's start date happens later than the
@@ -434,7 +435,7 @@ class Task(TreeNode):
         # constraints might have changed
         if old_endon_date != new_endondate_obj:
             self.recursive_sync()
-        
+
     def get_endon_date(self):
         """ Returns the endon date, which always respects all constraints """
         return self.endon_date

@@ -17,7 +17,7 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-from gi.repository import GObject, Gtk, Pango, GdkPixbuf
+from gi.repository import GObject, Gtk, Pango
 import xml.sax.saxutils as saxutils
 import locale
 

@@ -71,9 +71,11 @@ class TaskEditor(object):
         self.inserttag_button = self.builder.get_object("inserttag")
         self.inserttag_button.set_tooltip_text(GnomeConfig.TAG_TOOLTIP)
         self.open_parents_button = self.builder.get_object("open_parents")
-        self.repeattask_button = self.builder.get_object("repeattask_toggletoolbutton1")
-        self.repeattask_button.set_tooltip_text(GnomeConfig.REPEAT_TASK_TOOLTIP)
-        
+        self.repeattask_button = self.builder.get_object(
+            "repeattask_toggletoolbutton1")
+        self.repeattask_button.set_tooltip_text(
+            GnomeConfig.REPEAT_TASK_TOOLTIP)
+
         # Create our dictionary and connect it
         dic = {
             "mark_as_done_clicked": self.change_status,
@@ -106,11 +108,11 @@ class TaskEditor(object):
                 w, e, GTGCalendar.DATE_KIND_ENDON),
             "on_insert_subtask_clicked": self.insert_subtask,
             "on_inserttag_clicked": self.inserttag_clicked,
-            "on_repeattask_toggletoolbutton1_toggled" : self.repeattask_toggled,
-            "on_repeats_combobox_value_changed" : self.repeats_combobox_value_changed,
-            "on_end_combobox_value_changed" : self.end_combobox_value_changed,
-            "on_every_spinbutton_value_changed" : self.every_spinbutton_value_changed,
-            "on_endafter_spinbutton_value_changed" : self.endafter_spinbutton_value_changed,
+            "on_repeattask_toggletoolbutton1_toggled": self.repeattask_toggled,
+            "on_repeats_combobox_value_changed": self.repeats_combobox_value_changed,
+            "on_end_combobox_value_changed": self.end_combobox_value_changed,
+            "on_every_spinbutton_value_changed": self.every_spinbutton_value_changed,
+            "on_endafter_spinbutton_value_changed": self.endafter_spinbutton_value_changed,
             "on_open_parent_clicked": self.open_parent_clicked,
             "on_move": self.on_move,
         }
@@ -468,7 +470,6 @@ class TaskEditor(object):
         self.calendar.show_at_position(x + rect.x + rect.width,
                                        y + rect.y)
 
-
     def on_date_changed(self, calendar):
         date, date_kind = calendar.get_selected_date()
         if date_kind == GTGCalendar.DATE_KIND_DUE:
@@ -565,7 +566,7 @@ class TaskEditor(object):
             if repeat_txt == "Daily":
                 sum_txt = repeat_txt
             elif repeat_txt == "Yearly":
-                sum_txt = "Anually on"
+                sum_txt = "Annually on "
             else:
                 sum_txt = repeat_txt
         else:
@@ -629,20 +630,20 @@ class TaskEditor(object):
         label = self.builder.get_object("common_label")
         spinbutton = self.builder.get_object("every_spinbutton")
         if index == 0:
-            self.builder.get_object("box8").hide() 
-            self.builder.get_object("box13").hide() 
+            self.builder.get_object("box8").hide()
+            self.builder.get_object("box13").hide()
             self.builder.get_object("common_label").set_text("day")
         elif index == 1:
-            self.builder.get_object("box8").show() 
-            self.builder.get_object("box13").hide() 
+            self.builder.get_object("box8").show()
+            self.builder.get_object("box13").hide()
             self.builder.get_object("common_label").set_text("week")
         elif index == 2:
-            self.builder.get_object("box8").hide() 
-            self.builder.get_object("box13").show() 
+            self.builder.get_object("box8").hide()
+            self.builder.get_object("box13").show()
             self.builder.get_object("common_label").set_text("month")
         elif index == 3:
-            self.builder.get_object("box8").hide() 
-            self.builder.get_object("box13").hide() 
+            self.builder.get_object("box8").hide()
+            self.builder.get_object("box13").hide()
             self.builder.get_object("common_label").set_text("year")
         self.set_label_value(label, spinbutton)
         self.update_summary()
@@ -724,7 +725,8 @@ class TaskEditor(object):
         # We should also destroy the whole taskeditor object.
         if self.window:
             '''
-            if self.builder.get_object("repeattask_toggletoolbutton1").get_active():
+            if self.builder.get_object(
+                "repeattask_toggletoolbutton1").get_active():
                 self.task.recurringtask = 'R'
             else:
                 self.task.recurringtask = ''
