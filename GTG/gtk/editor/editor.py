@@ -113,6 +113,9 @@ class TaskEditor(object):
             "on_end_combobox_value_changed": self.end_combobox_value_changed,
             "on_every_spinbutton_value_changed": self.every_spinbutton_value_changed,
             "on_endafter_spinbutton_value_changed": self.endafter_spinbutton_value_changed,
+            "on_checkbuttons_toggled": self.days_checkbuttons_toggled,
+            "on_days_combobox_changed": self.days_combobox_value_changed,
+            "on_sequence_combobox_changed": self.sequence_combobox_value_changed,
             "on_open_parent_clicked": self.open_parent_clicked,
             "on_move": self.on_move,
         }
@@ -209,6 +212,7 @@ class TaskEditor(object):
 
         if self.task.get_recurrence_task() == "R":
             self.repeattask_button.set_active(True)
+            self.update_summary()
 
     # Define accelerator-keys for this dialog
     # TODO: undo/redo
@@ -554,6 +558,7 @@ class TaskEditor(object):
         self.textview.grab_focus()
 
     def update_summary(self):
+        #TODO Need to refine code.
         repeat_txt = self.builder.get_object(
             "repeats_combobox").get_active_text()
         every_val = self.builder.get_object(
@@ -566,13 +571,51 @@ class TaskEditor(object):
             if repeat_txt == "Daily":
                 sum_txt = repeat_txt
             elif repeat_txt == "Yearly":
-                sum_txt = "Annually on "
+                sum_txt = "Annually on "+self.startdate_widget.get_text()
             else:
                 sum_txt = repeat_txt
         else:
             sum_txt = "Every " + str(every_val) + " " +\
                 self.builder.get_object("common_label").\
                 get_text()
+
+        if repeat_txt == "Weekly":
+            days = []
+            days_sum_txt = ""
+            if self.builder.get_object("checkbutton1").get_active():
+                days += ["Sunday"]
+            if self.builder.get_object("checkbutton2").get_active():
+                days += ["Monday"]
+            if self.builder.get_object("checkbutton3").get_active():
+                days += ["Tuesday"]
+            if self.builder.get_object("checkbutton4").get_active():
+                days += ["Wednesday"]
+            if self.builder.get_object("checkbutton5").get_active():
+                days += ["Thursday"]
+            if self.builder.get_object("checkbutton6").get_active():
+                days += ["Friday"]
+            if self.builder.get_object("checkbutton7").get_active():
+                days += ["Saturday"]
+            length = len(days)
+            if length == 0:
+                #TODO select the current day
+                days_sum_txt = ""
+            elif length == 1:
+                days_sum_txt =  days[0]
+            elif length > 1:
+                if length == 7:
+                    days_sum_txt = "all days"
+                else:
+                    for day in days[:-1]:
+                        days_sum_txt += day + ", "
+                    days_sum_txt += days[-1]
+            sum_txt += " on "+ days_sum_txt
+        elif repeat_txt == "Monthly":
+            sequence_txt = self.builder.get_object(
+                "sequence_combobox").get_active_text()
+            days_txt = self.builder.get_object(
+                "days_combobox").get_active_text()
+            sum_txt += " on " + sequence_txt + " " + days_txt
 
         if end_txt == "After":
             occ_val = self.builder.get_object(
@@ -588,6 +631,14 @@ class TaskEditor(object):
         self.builder.get_object("show_summary_label").\
             set_text(sum_txt)
 
+    def days_checkbuttons_toggled(self, widget):
+        self.update_summary()
+
+    def days_combobox_value_changed(self, widget):
+        self.update_summary()
+
+    def sequence_combobox_value_changed(self, widget):
+        self.update_summary()
     def end_combobox_value_changed(self, widget):
         index = widget.get_active()
         if index == 0:

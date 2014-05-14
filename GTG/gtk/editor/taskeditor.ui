@@ -581,6 +581,7 @@
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_checkbuttons_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -597,6 +598,7 @@
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_checkbuttons_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -613,6 +615,7 @@
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_checkbuttons_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -629,6 +632,7 @@
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_checkbuttons_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -645,6 +649,7 @@
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_checkbuttons_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -661,6 +666,7 @@
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_checkbuttons_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -677,6 +683,7 @@
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_checkbuttons_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -736,6 +743,7 @@
                       <item translatable="yes">Fifth</item>
                       <item translatable="yes">Last</item>
                     </items>
+                    <signal name="changed" handler="on_sequence_combobox_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -756,7 +764,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkComboBoxText" id="day_combobox">
+                  <object class="GtkComboBoxText" id="days_combobox">
                     <property name="width_request">131</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -770,6 +778,7 @@
                       <item translatable="yes">Saturday</item>
                       <item translatable="yes">Sunday</item>
                     </items>
+                    <signal name="changed" handler="on_days_combobox_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
