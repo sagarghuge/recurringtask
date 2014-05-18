@@ -90,13 +90,19 @@ class Task(TreeNode):
     def get_id(self):
         return str(self.tid)
 
-    def get_recurrence_task(self):
+    def get_recurrence_attribute(self):
+        #TODO Will get the attribute recurrence
         if self.recurringtask is not None:
             return str(self.recurringtask)
 
+    def get_recurrence_task(self):
+        #TODO This will return the instances of task
+        if self.recurringtask is not None and self.recurringtask == 'True':
+            return self
+
     def set_recurrence_task(self, value):
-        if value == 'R':
-            self.recurringtask = str(value)
+        if value == 'True':
+            self.recurringtask = value
 
     def set_uuid(self, value):
         self.uuid = str(value)

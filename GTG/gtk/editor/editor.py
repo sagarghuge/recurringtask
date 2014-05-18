@@ -210,7 +210,7 @@ class TaskEditor(object):
         self.textview.set_editable(True)
         self.window.show()
 
-        if self.task.get_recurrence_task() == "R":
+        if self.task.get_recurrence_attribute() == "True":
             self.repeattask_button.set_active(True)
             self.update_summary()
 
@@ -599,7 +599,8 @@ class TaskEditor(object):
             length = len(days)
             if length == 0:
                 #TODO select the current day
-                days_sum_txt = ""
+                cur_day  = time.strftime('%A')
+                days_sum_txt = cur_day
             elif length == 1:
                 days_sum_txt =  days[0]
             elif length > 1:
@@ -639,6 +640,7 @@ class TaskEditor(object):
 
     def sequence_combobox_value_changed(self, widget):
         self.update_summary()
+
     def end_combobox_value_changed(self, widget):
         index = widget.get_active()
         if index == 0:
@@ -701,13 +703,14 @@ class TaskEditor(object):
 
     def repeattask_toggled(self, widget):
         if widget.get_active():
-            self.task.recurringtask = 'R'
+            self.task.recurringtask = 'True'
             self.builder.get_object("repeattaskbox").show()
             self.builder.get_object("end_combobox").set_row_span_column(0)
             self.builder.get_object("box6").show()
             self.builder.get_object("box12").show()
+            self.update_summary()
         else:
-            self.task.recurringtask = ''
+            self.task.recurringtask = 'False'
             self.builder.get_object("repeattaskbox").hide()
             self.builder.get_object("box6").hide()
             self.builder.get_object("box8").hide()
@@ -772,16 +775,13 @@ class TaskEditor(object):
 
     # We define dummy variable for when close is called from a callback
     def close(self, window=None, a=None, b=None, c=None):
-
+        if self.task.recurringtask == 'True':
+            if self.startdate_widget.get_text() == "":
+                #TODO you should popup dialog which says to set start date.
+                #you can set start date = current date
+                print ("Set start date")
         # We should also destroy the whole taskeditor object.
         if self.window:
-            '''
-            if self.builder.get_object(
-                "repeattask_toggletoolbutton1").get_active():
-                self.task.recurringtask = 'R'
-            else:
-                self.task.recurringtask = ''
-            '''
             self.window.destroy()
             self.window = None
 

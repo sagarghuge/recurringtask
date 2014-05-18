@@ -116,7 +116,7 @@ def task_to_xml(doc, task):
     t_xml.setAttribute("id", task.get_id())
     t_xml.setAttribute("status", task.get_status())
     t_xml.setAttribute("uuid", task.get_uuid())
-    t_xml.setAttribute("recurring", task.get_recurrence_task())
+    t_xml.setAttribute("recurring", task.get_recurrence_attribute())
 
     tags_str = ""
     for tag in task.get_tags_name():
