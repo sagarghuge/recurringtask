@@ -88,7 +88,7 @@ class DeletionUI():
                                 recursive_list_tasks(task_list, i)
 
                 task = self.req.get_task(tid)
-                if task.get_recurrence_task() == 'R':
+                if task.get_recurrence_attribute() == 'True':
                     recursive_list_tasks(rec_tasklist, task)
                 else:
                     recursive_list_tasks(tasklist, task)

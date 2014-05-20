@@ -36,6 +36,7 @@ from GTG.core.task import Task
 from GTG.tools.dates import Date
 from GTG.gtk.editor.calendar import GTGCalendar
 from GTG.gtk.help import add_help_shortcut
+from GTG.gtk.editor.notify_dialog import NotifyCloseUI
 
 
 class TaskEditor(object):
@@ -775,11 +776,6 @@ class TaskEditor(object):
 
     # We define dummy variable for when close is called from a callback
     def close(self, window=None, a=None, b=None, c=None):
-        if self.task.recurringtask == 'True':
-            if self.startdate_widget.get_text() == "":
-                #TODO you should popup dialog which says to set start date.
-                #you can set start date = current date
-                print ("Set start date")
         # We should also destroy the whole taskeditor object.
         if self.window:
             self.window.destroy()
@@ -792,6 +788,13 @@ class TaskEditor(object):
     # Will be linked to this destruction method that will save the task
     def destruction(self, a=None):
         # Save should be also called when buffer is modified
+        '''
+        if self.task.recurringtask == 'True':
+            if self.duedate_widget.get_text() == "":
+                print ("Set Due date")
+                notify_dialog = NotifyCloseUI()
+                notify_dialog.notifyclose()
+        '''
         self.pengine.onTaskClose(self.plugin_api)
         self.pengine.remove_api(self.plugin_api)
         tid = self.task.get_id()
