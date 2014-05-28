@@ -184,6 +184,7 @@ class TaskEditor(object):
             self.task.set_to_keep()
         self.textview.modified(full=True)
         self.window.connect("destroy", self.destruction)
+        self.window.connect("delete-event", self.quit)
         self.calendar.connect("date-changed", self.on_date_changed)
 
         # plugins
@@ -780,7 +781,6 @@ class TaskEditor(object):
         if self.window:
             self.window.destroy()
             self.window = None
-
     # The destroy signal is linked to the "close" button. So if we call
     # destroy in the close function, this will cause the close to be called
     # twice
@@ -788,13 +788,6 @@ class TaskEditor(object):
     # Will be linked to this destruction method that will save the task
     def destruction(self, a=None):
         # Save should be also called when buffer is modified
-        '''
-        if self.task.recurringtask == 'True':
-            if self.duedate_widget.get_text() == "":
-                print ("Set Due date")
-                notify_dialog = NotifyCloseUI()
-                notify_dialog.notifyclose()
-        '''
         self.pengine.onTaskClose(self.plugin_api)
         self.pengine.remove_api(self.plugin_api)
         tid = self.task.get_id()
@@ -806,7 +799,14 @@ class TaskEditor(object):
                 if i:
                     i.set_to_keep()
         self.vmanager.close_task(tid)
-
+    
+    def quit(self, widget, data=None):
+        if self.task.recurringtask == 'True':
+            if self.duedate_widget.get_text() == "":
+                notify_dialog = NotifyCloseUI()
+                notify_dialog.notifyclose()
+                return True
+        
     def get_builder(self):
         return self.builder
 
