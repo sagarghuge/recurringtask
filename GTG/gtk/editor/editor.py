@@ -214,6 +214,7 @@ class TaskEditor(object):
 
         if self.task.get_recurrence_attribute() == "True":
             self.repeattask_button.set_active(True)
+            self.get_recurrence_details()
             self.update_summary()
 
     # Define accelerator-keys for this dialog
@@ -613,26 +614,39 @@ class TaskEditor(object):
                         days_sum_txt += day + ", "
                     days_sum_txt += days[-1]
             sum_txt += " on "+ days_sum_txt
+            #set days to write in xml
+            self.task.days = days_sum_txt
         elif repeat_txt == "Monthly":
             sequence_txt = self.builder.get_object(
                 "sequence_combobox").get_active_text()
             days_txt = self.builder.get_object(
                 "days_combobox").get_active_text()
             sum_txt += " on " + sequence_txt + " " + days_txt
-
+            self.task.onthe = sequence_txt
+            self.task.onday = days_txt
         if end_txt == "After":
             occ_val = self.builder.get_object(
                 "endafter_spinbutton").get_value_as_int()
             if occ_val > 1:
                 sum_txt = sum_txt + ", " + str(occ_val) + " times"
+            #set endson attribute to write in xml
+            self.task.endson = self.builder.get_object(
+                "occurrence_label").get_text()
+            self.task.occurrences = occ_val
         elif end_txt == "On":
             endondate_txt = self.builder.get_object(
                 "endondate_entry").get_text()
             if endondate_txt != "":
                 sum_txt = sum_txt + ", until " + str(endondate_txt)
+            self.task.endson = "date"
+        else:
+            self.task.endson = "never"
 
         self.builder.get_object("show_summary_label").\
             set_text(sum_txt)
+        #TODO set recurring task details
+        self.task.repeats = repeat_txt
+        self.task.frequency = every_val
 
     def days_checkbuttons_toggled(self, widget):
         self.update_summary()

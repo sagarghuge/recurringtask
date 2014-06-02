@@ -5,7 +5,7 @@
   <object class="GtkDialog" id="notify_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Confirm task deletion</property>
+    <property name="title" translatable="yes">Set Due date</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <signal name="close" handler="on_delete_cancel" swapped="no"/>

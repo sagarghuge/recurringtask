@@ -61,6 +61,13 @@ class Task(TreeNode):
         self.endon_date = Date.no_date()
         self.can_be_deleted = newtask
         self.recurringtask = None
+        self.repeats = None
+        self.frequency = None
+        self.days = None
+        self.endson = None
+        self.occurrences = None
+        self.onthe = None
+        self.onday = None
         # tags
         self.tags = []
         self.req = requester
@@ -95,14 +102,40 @@ class Task(TreeNode):
         if self.recurringtask is not None:
             return str(self.recurringtask)
 
+    def get_recurrence_onthe(self):
+        if self.onthe is not None:
+            return str(self.onthe)
+
+    def get_recurrence_onday(self):
+        if self.onday is not None:
+            return str(self.onday)
+
     def get_recurrence_task(self):
         #TODO This will return the instances of task
         if self.recurringtask is not None and self.recurringtask == 'True':
             return self
 
-    def set_recurrence_task(self, value):
-        if value == 'True':
-            self.recurringtask = value
+    def get_recurrence_endson(self):
+        if self.endson is not None:
+            if self.endson == "occurrence" or self.endson == "occurrences":
+                return str(self.occurrences)
+            else:
+                return str(self.endson)
+
+    def get_recurrence_repeats(self):
+        if self.repeats is not None:
+            return str(self.repeats)
+
+    def get_recurrence_frequency(self):
+        if self.frequency is not None:
+            return str(self.frequency)
+
+    def get_recurrence_days(self):
+        if self.days is not None:
+            return str(self.days)
+
+    def set_recurrence_attribute(self, value):
+        self.recurringtask = value
 
     def set_uuid(self, value):
         self.uuid = str(value)
