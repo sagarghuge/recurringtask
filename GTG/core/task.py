@@ -106,6 +106,12 @@ class Task(TreeNode):
         if self.onthe is not None:
             return str(self.onthe)
 
+    def set_recurrence_onthe(self, onthe):
+        self.onthe = onthe
+
+    def set_recurrence_onday(self, onday):
+        self.onday = onday
+
     def get_recurrence_onday(self):
         if self.onday is not None:
             return str(self.onday)
@@ -122,20 +128,39 @@ class Task(TreeNode):
             else:
                 return str(self.endson)
 
+    def set_recurrence_endson(self, attr, endson):
+        if attr == "date":
+            self.endson = "date"
+            self.set_endon_date(Date(endson))
+        elif attr == "occurrence" or attr == "occurrences":
+            self.endson = attr
+            self.occurrences = endson
+        else:
+            self.endson = attr
+
     def get_recurrence_repeats(self):
         if self.repeats is not None:
             return str(self.repeats)
+
+    def set_recurrence_repeats(self, repeats):
+        self.repeats = repeats
 
     def get_recurrence_frequency(self):
         if self.frequency is not None:
             return str(self.frequency)
 
+    def set_recurrence_frequency(self, frequency):
+        self.frequency = frequency
+
     def get_recurrence_days(self):
         if self.days is not None:
             return str(self.days)
 
-    def set_recurrence_attribute(self, value):
-        self.recurringtask = value
+    def set_recurrence_days(self, days):
+        self.days = days
+
+    def set_recurrence_attribute(self, attribute):
+        self.recurringtask = attribute
 
     def set_uuid(self, value):
         self.uuid = str(value)

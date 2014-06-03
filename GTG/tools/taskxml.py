@@ -40,13 +40,6 @@ def read_node(xmlnode, name):
     else:
         return ""
 
-'''def print_node(root):
-    if root.childNodes:
-        for node in root.childNodes:
-            if node.nodeType == node.ELEMENT_NODE:
-            print node.tagName,"has value:",  node.nodeValue, "and is child of:", node.parentNode.tagName
-            print_node(node)
-'''
 # Take an empty task, an XML node and return a Task.
 def task_from_xml(task, xmlnode):
     # print "********************************"
@@ -56,7 +49,24 @@ def task_from_xml(task, xmlnode):
     task.set_title(read_node(xmlnode, "title"))
     if xmlnode.getAttribute("recur") != "":
         task.set_recurrence_attribute(xmlnode.getAttribute("recur"))
-        print(xmlnode.childNodes) 
+        for node in xmlnode.childNodes:
+            if node.tagName == "recurring":
+                repeats = node.childNodes[0].tagName
+                task.set_recurrence_repeats(repeats)
+                frequency = read_node(xmlnode, "frequency")
+                task.set_recurrence_frequency(frequency)
+                if repeats == "Weekly":
+                    days = read_node(xmlnode, "day")
+                    task.set_recurrence_days(days)
+                elif repeats == "Monthly":
+                    onthe = read_node(xmlnode, "on")
+                    onday = read_node(xmlnode, "day")
+                    task.set_recurrence_onthe(onthe)
+                    task.set_recurrence_onday(onday)
+                endon_child = node.childNodes[1]
+                for node in endon_child.childNodes:
+                    task.set_recurrence_endson(
+                        node.tagName, read_node(xmlnode, "%s"%(node.tagName)))
 
     status = xmlnode.getAttribute("status")
     donedate = Date.parse(read_node(xmlnode, "donedate"))
@@ -144,7 +154,7 @@ def task_to_xml(doc, task):
     cleanxml.addTextNode(doc, repeats_xml, "frequency", task.get_recurrence_frequency())
     if whence == "Weekly":
         cleanxml.addTextNode(doc, repeats_xml, "day", task.get_recurrence_days())
-    if whence == "Monthly":
+    elif whence == "Monthly":
         cleanxml.addTextNode(doc, repeats_xml, "on", task.get_recurrence_onthe())
         cleanxml.addTextNode(doc, repeats_xml, "day", task.get_recurrence_onday())
     if task.endson == "date":

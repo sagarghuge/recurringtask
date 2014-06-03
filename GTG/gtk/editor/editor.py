@@ -60,6 +60,7 @@ class TaskEditor(object):
         self.config = taskconfig
         self.time = None
         self.plural = False
+        self.days = None
         self.clipboard = clipboard
         self.builder = Gtk.Builder()
         self.builder.add_from_file(GnomeConfig.EDITOR_UI_FILE)
@@ -560,6 +561,55 @@ class TaskEditor(object):
             self.textview.insert_text(" @", itera)
         self.textview.grab_focus()
 
+    def get_recurrence_details(self):
+        repeat_dict = {"Daily": 0, "Weekly": 1, "Monthly": 2, "Yearly": 3}
+        days_dict = {"Sunday": 0, "Monday": 1, "Tuesday": 2, "Wednesday": 3,
+                     "Thursday": 4, "Friday": 5, "Saturday": 6}
+        seq_dict = {"First": 0, "Second": 1, "Third": 2,
+                    "Fourth": 3, "Fifth": 4, "Last": 5}
+        self.builder.get_object(
+            "repeats_combobox").set_active(repeat_dict[self.task.repeats])
+        self.builder.get_object(
+            "every_spinbutton").set_value(int(self.task.frequency))
+
+        if self.task.endson == "date":
+            self.builder.get_object(
+                "end_combobox").set_active(1)
+            self.builder.get_object(
+                "endondate_entry").set_text(str(self.task.get_endon_date()))
+        elif self.task.endson == "never":
+            self.builder.get_object(
+                "end_combobox").set_active(2)
+        else:
+            self.builder.get_object(
+                "end_combobox").set_active(0)
+            self.builder.get_object(
+                "endafter_spinbutton").set_value(int(self.task.occurrences))
+
+        if self.task.repeats == "Weekly":
+            #TODO toggle check buttons
+            if self.task.days.__contains__(","):
+                days_list = self.task.days.split(",")
+                for item in days_list:
+                    checkbutton_no = days_dict[item.strip()] + 1
+                    self.builder.get_object(
+                        "checkbutton"+str(checkbutton_no)).set_active(True)
+            else:
+                if self.task.days == "all days":
+                    for key, val in days_dict.items():
+                        self.builder.get_object(
+                            "checkbutton"+str(val+1)).set_active(True)
+                else:
+                    checkbutton_no = days_dict[self.task.days] + 1
+                    self.builder.get_object(
+                        "checkbutton"+str(checkbutton_no)).set_active(True)
+
+        elif self.task.repeats == "Monthly":
+            self.builder.get_object(
+                "days_combobox").set_active(days_dict[self.task.onday])
+            self.builder.get_object(
+                "sequence_combobox").set_active(seq_dict[self.task.onthe])
+
     def update_summary(self):
         #TODO Need to refine code.
         repeat_txt = self.builder.get_object(
@@ -583,78 +633,72 @@ class TaskEditor(object):
                 get_text()
 
         if repeat_txt == "Weekly":
-            days = []
-            days_sum_txt = ""
-            if self.builder.get_object("checkbutton1").get_active():
-                days += ["Sunday"]
-            if self.builder.get_object("checkbutton2").get_active():
-                days += ["Monday"]
-            if self.builder.get_object("checkbutton3").get_active():
-                days += ["Tuesday"]
-            if self.builder.get_object("checkbutton4").get_active():
-                days += ["Wednesday"]
-            if self.builder.get_object("checkbutton5").get_active():
-                days += ["Thursday"]
-            if self.builder.get_object("checkbutton6").get_active():
-                days += ["Friday"]
-            if self.builder.get_object("checkbutton7").get_active():
-                days += ["Saturday"]
-            length = len(days)
-            if length == 0:
-                #TODO select the current day
-                cur_day  = time.strftime('%A')
-                days_sum_txt = cur_day
-            elif length == 1:
-                days_sum_txt =  days[0]
-            elif length > 1:
-                if length == 7:
-                    days_sum_txt = "all days"
-                else:
-                    for day in days[:-1]:
-                        days_sum_txt += day + ", "
-                    days_sum_txt += days[-1]
-            sum_txt += " on "+ days_sum_txt
-            #set days to write in xml
-            self.task.days = days_sum_txt
+            txt = self.days_update()
+            sum_txt += " on " + txt
         elif repeat_txt == "Monthly":
             sequence_txt = self.builder.get_object(
                 "sequence_combobox").get_active_text()
             days_txt = self.builder.get_object(
                 "days_combobox").get_active_text()
             sum_txt += " on " + sequence_txt + " " + days_txt
-            self.task.onthe = sequence_txt
-            self.task.onday = days_txt
         if end_txt == "After":
             occ_val = self.builder.get_object(
                 "endafter_spinbutton").get_value_as_int()
             if occ_val > 1:
                 sum_txt = sum_txt + ", " + str(occ_val) + " times"
-            #set endson attribute to write in xml
-            self.task.endson = self.builder.get_object(
-                "occurrence_label").get_text()
-            self.task.occurrences = occ_val
         elif end_txt == "On":
             endondate_txt = self.builder.get_object(
                 "endondate_entry").get_text()
             if endondate_txt != "":
                 sum_txt = sum_txt + ", until " + str(endondate_txt)
-            self.task.endson = "date"
-        else:
-            self.task.endson = "never"
 
         self.builder.get_object("show_summary_label").\
             set_text(sum_txt)
         #TODO set recurring task details
-        self.task.repeats = repeat_txt
-        self.task.frequency = every_val
+
+    def days_update(self):
+        days = []
+        days_sum_txt = ""
+        if self.builder.get_object("checkbutton1").get_active():
+            days += ["Sunday"]
+        if self.builder.get_object("checkbutton2").get_active():
+            days += ["Monday"]
+        if self.builder.get_object("checkbutton3").get_active():
+            days += ["Tuesday"]
+        if self.builder.get_object("checkbutton4").get_active():
+            days += ["Wednesday"]
+        if self.builder.get_object("checkbutton5").get_active():
+            days += ["Thursday"]
+        if self.builder.get_object("checkbutton6").get_active():
+            days += ["Friday"]
+        if self.builder.get_object("checkbutton7").get_active():
+            days += ["Saturday"]
+        length = len(days)
+        if length == 0:
+            #TODO select the current day
+            cur_day  = time.strftime('%A')
+            days_sum_txt = cur_day
+        elif length == 1:
+            days_sum_txt =  days[0]
+        elif length > 1:
+            if length == 7:
+                days_sum_txt = "all days"
+            else:
+                for day in days[:-1]:
+                    days_sum_txt += day + ", "
+                days_sum_txt += days[-1]
+        return days_sum_txt
 
     def days_checkbuttons_toggled(self, widget):
+        self.task.days = self.days_update()
         self.update_summary()
 
     def days_combobox_value_changed(self, widget):
+        self.task.onday = widget.get_active_text()
         self.update_summary()
 
     def sequence_combobox_value_changed(self, widget):
+        self.task.onthe = widget.get_active_text()
         self.update_summary()
 
     def end_combobox_value_changed(self, widget):
@@ -664,24 +708,31 @@ class TaskEditor(object):
             self.builder.get_object("endafter_spinbutton").show()
             self.builder.get_object("endonbox").hide()
             self.builder.get_object("occurrence_label").show()
+            #set endson attribute to write in xml
+            self.task.endson = self.builder.get_object(
+                "occurrence_label").get_text()
         elif index == 1:
             self.builder.get_object("box11").show()
             self.builder.get_object("endafter_spinbutton").hide()
             self.builder.get_object("endonbox").show()
             self.builder.get_object("occurrence_label").hide()
+            self.task.endson = "date"
         elif index == 2:
             self.builder.get_object("box11").hide()
+            self.task.endson = "never"
         self.update_summary()
 
     def every_spinbutton_value_changed(self, widget):
         label = self.builder.get_object("common_label")
         spinbutton = self.builder.get_object("every_spinbutton")
+        self.task.frequency = spinbutton.get_value_as_int()
         self.set_label_value(label, spinbutton)
         self.update_summary()
 
     def endafter_spinbutton_value_changed(self, widget):
         label = self.builder.get_object("occurrence_label")
         spinbutton = self.builder.get_object("endafter_spinbutton")
+        self.task.occurrences = spinbutton.get_value_as_int()
         self.set_label_value(label, spinbutton)
         self.update_summary()
 
@@ -696,6 +747,7 @@ class TaskEditor(object):
 
     def repeats_combobox_value_changed(self, widget):
         index = widget.get_active()
+        self.task.repeats = widget.get_active_text()
         label = self.builder.get_object("common_label")
         spinbutton = self.builder.get_object("every_spinbutton")
         if index == 0:
@@ -724,7 +776,6 @@ class TaskEditor(object):
             self.builder.get_object("end_combobox").set_row_span_column(0)
             self.builder.get_object("box6").show()
             self.builder.get_object("box12").show()
-            self.update_summary()
         else:
             self.task.recurringtask = 'False'
             self.builder.get_object("repeattaskbox").hide()
