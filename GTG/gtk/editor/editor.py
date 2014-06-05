@@ -641,6 +641,7 @@ class TaskEditor(object):
             days_txt = self.builder.get_object(
                 "days_combobox").get_active_text()
             sum_txt += " on " + sequence_txt + " " + days_txt
+
         if end_txt == "After":
             occ_val = self.builder.get_object(
                 "endafter_spinbutton").get_value_as_int()
@@ -709,8 +710,6 @@ class TaskEditor(object):
             self.builder.get_object("endonbox").hide()
             self.builder.get_object("occurrence_label").show()
             #set endson attribute to write in xml
-            self.task.endson = self.builder.get_object(
-                "occurrence_label").get_text()
         elif index == 1:
             self.builder.get_object("box11").show()
             self.builder.get_object("endafter_spinbutton").hide()
@@ -734,6 +733,8 @@ class TaskEditor(object):
         spinbutton = self.builder.get_object("endafter_spinbutton")
         self.task.occurrences = spinbutton.get_value_as_int()
         self.set_label_value(label, spinbutton)
+        self.task.endson = self.builder.get_object(
+            "occurrence_label").get_text()
         self.update_summary()
 
     def set_label_value(self, label, spinbutton):
