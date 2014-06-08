@@ -68,6 +68,7 @@ class Task(TreeNode):
         self.occurrences = None
         self.onthe = None
         self.onday = None
+        self.rid = None
         # tags
         self.tags = []
         self.req = requester
@@ -96,6 +97,12 @@ class Task(TreeNode):
 
     def get_id(self):
         return str(self.tid)
+
+    def set_rid(self, rid):
+        self.rid = rid
+
+    def get_rid(self):
+        return str(self.rid)
 
     def get_recurrence_attribute(self):
         #TODO Will get the attribute recurrence
@@ -265,6 +272,10 @@ class Task(TreeNode):
             self.set_due_date(due_date)
             self.set_start_date(defer_date)
 
+    def create_recurring_instance(self):
+        task = self.req.new_task()
+        #task.set_title(self.get_title())
+
     def set_status(self, status, donedate=None):
         old_status = self.status
         self.can_be_deleted = False
@@ -273,6 +284,8 @@ class Task(TreeNode):
             # we first modify the status of the children
             # If Done, we set the done date
             if status in [self.STA_DONE, self.STA_DISMISSED]:
+                if self.recurringtask == "True":
+                    self.create_recurring_instance()
                 for c in self.get_subtasks():
                     if c.get_status() in [self.STA_ACTIVE]:
                         c.set_status(status, donedate=donedate)

@@ -37,6 +37,7 @@ from GTG.tools.dates import Date
 from GTG.gtk.editor.calendar import GTGCalendar
 from GTG.gtk.help import add_help_shortcut
 from GTG.gtk.editor.notify_dialog import NotifyCloseUI
+import uuid
 
 
 class TaskEditor(object):
@@ -773,12 +774,14 @@ class TaskEditor(object):
     def repeattask_toggled(self, widget):
         if widget.get_active():
             self.task.recurringtask = 'True'
+            self.task.rid = str(uuid.uuid4())
             self.builder.get_object("repeattaskbox").show()
             self.builder.get_object("end_combobox").set_row_span_column(0)
             self.builder.get_object("box6").show()
             self.builder.get_object("box12").show()
         else:
             self.task.recurringtask = 'False'
+            self.task.rid = None
             self.builder.get_object("repeattaskbox").hide()
             self.builder.get_object("box6").hide()
             self.builder.get_object("box8").hide()

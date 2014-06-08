@@ -49,6 +49,7 @@ def task_from_xml(task, xmlnode):
     task.set_title(read_node(xmlnode, "title"))
     if xmlnode.getAttribute("recur") != "":
         task.set_recurrence_attribute(xmlnode.getAttribute("recur"))
+        task.set_rid(xmlnode.getAttribute("rid"))
         for node in xmlnode.childNodes:
             if node.tagName == "recurring":
                 repeats = node.childNodes[0].tagName
@@ -143,6 +144,7 @@ def task_to_xml(doc, task):
  
     if recure_val == "True":
         t_xml.setAttribute("recur", task.get_recurrence_attribute())
+        t_xml.setAttribute("rid", task.get_rid())
         whence = task.get_recurrence_repeats()
         recur_xml = doc.createElement("recurring")
         whence_xml = doc.createElement("%s"%(whence))
