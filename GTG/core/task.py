@@ -272,9 +272,30 @@ class Task(TreeNode):
             self.set_due_date(due_date)
             self.set_start_date(defer_date)
 
+    #TODO refactor this method and create copy and create task new method
     def create_recurring_instance(self):
         task = self.req.new_task()
-        #task.set_title(self.get_title())
+        task.set_recurrence_attribute(self.get_recurrence_attribute())
+        task.set_title(self.get_title())
+        task.set_rid(self.get_rid())
+        #add tags
+        for t in self.get_tags():
+            task.add_tag(t.get_name())
+        #Before setting content set all attribute values.
+        task.set_text(self.get_text())
+        task.set_start_date(self.get_start_date())
+        #TODO calculate new due date depending on the recurrence details.
+        task.set_due_date(self.get_due_date())
+        task.set_endon_date(self.get_endon_date())
+
+        #fire all recrrence methods
+        task.set_recurrence_repeats(self.get_recurrence_repeats())
+        task.set_recurrence_frequency(self.get_recurrence_frequency())
+        task.set_recurrence_onthe(self.get_recurrence_onthe())
+        task.set_recurrence_onday(self.get_recurrence_onday())
+        task.set_recurrence_endson(self.endson, self.get_recurrence_endson())
+        task.set_recurrence_days(self.get_recurrence_days())
+        self.sync()
 
     def set_status(self, status, donedate=None):
         old_status = self.status
