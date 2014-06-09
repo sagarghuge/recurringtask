@@ -779,6 +779,7 @@ class TaskEditor(object):
             self.builder.get_object("end_combobox").set_row_span_column(0)
             self.builder.get_object("box6").show()
             self.builder.get_object("box12").show()
+            self.update_summary()
         else:
             self.task.recurringtask = 'False'
             self.task.rid = None

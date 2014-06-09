@@ -274,6 +274,7 @@ class Manager(GObject.GObject):
         task status. It also emits a signal with the task instance as first
         and the new status as second parameter
         '''
+        task.do_prior_status_setting(new_status)
         task.set_status(new_status)
         GObject.idle_add(self.emit, "task-status-changed", task, new_status)
 

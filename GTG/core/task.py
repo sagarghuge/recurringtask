@@ -69,6 +69,7 @@ class Task(TreeNode):
         self.onthe = None
         self.onday = None
         self.rid = None
+        self.parent = None
         # tags
         self.tags = []
         self.req = requester
@@ -273,8 +274,11 @@ class Task(TreeNode):
             self.set_start_date(defer_date)
 
     #TODO refactor this method and create copy and create task new method
-    def create_recurring_instance(self):
-        task = self.req.new_task()
+    def create_recurring_instance(self, is_subtask, parent=None):
+        if is_subtask:
+            task = parent.new_subtask()
+        else:
+            task = self.req.new_task()
         task.set_recurrence_attribute(self.get_recurrence_attribute())
         task.set_title(self.get_title())
         task.set_rid(self.get_rid())
@@ -295,8 +299,20 @@ class Task(TreeNode):
         task.set_recurrence_onday(self.get_recurrence_onday())
         task.set_recurrence_endson(self.endson, self.get_recurrence_endson())
         task.set_recurrence_days(self.get_recurrence_days())
-        self.sync()
+        self.recursive_sync()
+        return task
 
+    def do_prior_status_setting(self, status):
+        is_subtask = False
+        if status in [self.STA_DONE, self.STA_DISMISSED]:
+            if self.recurringtask == "True":
+                for task in self.get_self_and_all_subtasks():
+                    if not is_subtask:
+                        self.parent = task.create_recurring_instance(is_subtask)
+                        is_subtask = True
+                    else:
+                        task.create_recurring_instance(is_subtask, self.parent)    
+                    
     def set_status(self, status, donedate=None):
         old_status = self.status
         self.can_be_deleted = False
@@ -305,8 +321,6 @@ class Task(TreeNode):
             # we first modify the status of the children
             # If Done, we set the done date
             if status in [self.STA_DONE, self.STA_DISMISSED]:
-                if self.recurringtask == "True":
-                    self.create_recurring_instance()
                 for c in self.get_subtasks():
                     if c.get_status() in [self.STA_ACTIVE]:
                         c.set_status(status, donedate=donedate)
