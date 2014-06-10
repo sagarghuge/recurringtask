@@ -214,10 +214,27 @@ class TaskEditor(object):
         self.textview.set_editable(True)
         self.window.show()
 
+        #Set initial values of recurring task
+        self.init_recurring()
+
         if self.task.get_recurrence_attribute() == "True":
             self.repeattask_button.set_active(True)
             self.get_recurrence_details()
             self.update_summary()
+
+    def init_recurring(self):
+        if not self.task.recurringtask:
+            self.task.repeats = self.builder.get_object(
+                "repeats_combobox").get_active_text()
+            self.task.frequency = self.builder.get_object(
+                "every_spinbutton").get_value_as_int()
+            self.task.onthe = self.builder.get_object(
+                "sequence_combobox").get_active_text()
+            self.task.onday = self.builder.get_object(
+                "days_combobox").get_active_text()
+            self.task.days = self.days_update()
+            self.task.endson = self.builder.get_object(
+                "end_combobox").get_active_text().lower()
 
     # Define accelerator-keys for this dialog
     # TODO: undo/redo

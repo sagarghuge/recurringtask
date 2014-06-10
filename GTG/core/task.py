@@ -311,7 +311,10 @@ class Task(TreeNode):
                         self.parent = task.create_recurring_instance(is_subtask)
                         is_subtask = True
                     else:
-                        task.create_recurring_instance(is_subtask, self.parent)    
+                        if task.has_child():
+                            self.parent = task.create_recurring_instance(is_subtask, self.parent)
+                        else:
+                            task.create_recurring_instance(is_subtask, self.parent)
                     
     def set_status(self, status, donedate=None):
         old_status = self.status
