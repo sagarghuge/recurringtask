@@ -638,7 +638,7 @@ class TaskEditor(object):
             "end_combobox").get_active_text()
 
         sum_txt = None
-        if every_val < 1:
+        if every_val <= 1:
             if repeat_txt == "Daily":
                 sum_txt = repeat_txt
             elif repeat_txt == "Yearly":

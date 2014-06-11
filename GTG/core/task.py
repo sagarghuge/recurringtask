@@ -70,6 +70,7 @@ class Task(TreeNode):
         self.onday = None
         self.rid = None
         self.parent = None
+        self.is_subtask = False
         # tags
         self.tags = []
         self.req = requester
@@ -273,6 +274,16 @@ class Task(TreeNode):
             self.set_due_date(due_date)
             self.set_start_date(defer_date)
 
+    def validate_task(self):
+        now = datetime.now()
+        current_date = Date.parse(now.strftime("%Y-%m-%d"))
+        print(current_date)
+        print(type(current_date))
+        print(self.due_date)
+        print(type(self.due_date))
+        if self.due_date.__le__(current_date):
+            self.activate_create_instance()
+
     #TODO refactor this method and create copy and create task new method
     def create_recurring_instance(self, is_subtask, parent=None):
         if is_subtask:
@@ -303,19 +314,21 @@ class Task(TreeNode):
         return task
 
     def do_prior_status_setting(self, status):
-        is_subtask = False
         if status in [self.STA_DONE, self.STA_DISMISSED]:
             if self.recurringtask == "True":
-                for task in self.get_self_and_all_subtasks():
-                    if not is_subtask:
-                        self.parent = task.create_recurring_instance(is_subtask)
-                        is_subtask = True
-                    else:
-                        if task.has_child():
-                            self.parent = task.create_recurring_instance(is_subtask, self.parent)
-                        else:
-                            task.create_recurring_instance(is_subtask, self.parent)
-                    
+                self.activate_create_instance() 
+
+    def activate_create_instance(self):
+        for task in self.get_self_and_all_subtasks():
+            if not self.is_subtask:
+                self.parent = task.create_recurring_instance(self.is_subtask)
+                self.is_subtask = True
+            else:
+                if task.has_child():
+                    self.parent = task.create_recurring_instance(self.is_subtask, self.parent)
+                else:
+                    task.create_recurring_instance(self.is_subtask, self.parent)
+
     def set_status(self, status, donedate=None):
         old_status = self.status
         self.can_be_deleted = False
@@ -418,7 +431,6 @@ class Task(TreeNode):
     # get_due_date_constraint method.
     def set_due_date(self, new_duedate):
         """Defines the task's due date."""
-
         def __get_defined_parent_list(task):
             """Recursively fetch a list of parents that have a defined due date
                which is not fuzzy"""

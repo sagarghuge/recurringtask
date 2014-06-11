@@ -562,6 +562,7 @@ class TaskBrowser(GObject.GObject):
 
     def refresh_workview(self, timer):
         task_tree = self.req.get_tasks_tree(name='active', refresh=False)
+        self.req.validate_recurring_tasks()
         task_tree.refresh_all()
 
     def set_view(self, viewname):
