@@ -153,6 +153,19 @@ class Requester(GObject.GObject):
 
         return None
 
+    def get_all_recurring_instances(self, tid):
+        "Compare rid and return all task which are having same rid"
+        rtid = []
+        tasks  = self.get_tasks_tree('active', False).get_all_nodes()
+        tasktree = self.get_main_view()
+        temp = tasktree.get_node(tid)
+        for task_id in tasks:
+            task = tasktree.get_node(task_id)
+            if task.rid == temp.rid:
+                print("ok")
+                rtid.append(task_id)
+        return rtid
+
     ############### Tags ##########################
     ###############################################
     def get_tag_tree(self):

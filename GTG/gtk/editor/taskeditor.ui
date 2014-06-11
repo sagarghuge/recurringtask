@@ -855,7 +855,6 @@
             </child>
             <child>
               <object class="GtkBox" id="box11">
-                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkSpinButton" id="endafter_spinbutton">

@@ -41,12 +41,35 @@ class DeletionUI():
         signals = {"on_delete_confirm": self.on_delete_confirm,
                    "on_delete_cancel": lambda x: x.hide, }
         self.builder.connect_signals(signals)
-        signals_rec = {"on_delete_confirm": self.on_delete_confirm,
+        signals_rec = {"on_rec_delete_confirm": self.on_rec_delete_confirm,
+                       "on_multiple_delete_confirm":
+                            self.on_multiple_delete_confirm,
                        "on_delete_cancel": self.on_delete_cancel, }
 
         self.builder_rec.connect_signals(signals_rec)
 
     def on_delete_cancel(self, widget):
+        self.builder_rec.get_object("confirm_delete_rec").hide()
+
+    def on_rec_delete_confirm(self, widget):
+        """if we pass a tid as a parameter, we delete directly
+        otherwise, we will look which tid is selected"""
+        for tid in self.tids_todelete:
+            if self.req.has_task(tid):
+                self.req.delete_task(tid, recursive=True)
+        self.tids_todelete = []
+        self.on_delete_update_tags()
+        self.builder_rec.get_object("confirm_delete_rec").hide()
+
+    def on_multiple_delete_confirm(self, widget):
+        for tid in self.tids_todelete:
+            if self.req.has_task(tid):
+                tasks = self.req.get_all_recurring_instances(tid)
+                if tasks is not None:
+                    for tid in tasks:
+                        self.req.delete_task(tid, recursive=True)
+        self.tids_todelete = []
+        self.on_delete_update_tags()
         self.builder_rec.get_object("confirm_delete_rec").hide()
 
     def on_delete_confirm(self, widget):
@@ -56,7 +79,9 @@ class DeletionUI():
             if self.req.has_task(tid):
                 self.req.delete_task(tid, recursive=True)
         self.tids_todelete = []
+        self.on_delete_update_tags()
 
+    def on_delete_update_tags(self):
         # Update tags
         for tagname in self.update_tags:
             tag = self.req.get_tag(tagname)

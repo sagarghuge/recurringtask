@@ -79,8 +79,8 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="relief">half</property>
-                    <signal name="activate" handler="on_delete_confirm" swapped="no"/>
-                    <signal name="released" handler="on_delete_confirm" swapped="no"/>
+                    <signal name="activate" handler="on_rec_delete_confirm" swapped="no"/>
+                    <signal name="released" handler="on_rec_delete_confirm" swapped="no"/>
                     <child>
                       <object class="GtkBox" id="cdr-box3">
                         <property name="visible">True</property>
@@ -137,8 +137,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="activate" handler="on_delete_confirm" swapped="no"/>
-                    <signal name="released" handler="on_delete_confirm" swapped="no"/>
+                    <signal name="activate" handler="on_multiple_delete_confirm" swapped="no"/>
+                    <signal name="released" handler="on_multiple_delete_confirm" swapped="no"/>
                     <child>
                       <object class="GtkBox" id="cdr-box4">
                         <property name="visible">True</property>
