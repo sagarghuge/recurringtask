@@ -20,7 +20,7 @@
 """
 task.py contains the Task class which represents (guess what) a task
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 import cgi
 import re
 import uuid
@@ -277,13 +277,17 @@ class Task(TreeNode):
     def validate_task(self):
         now = datetime.now()
         current_date = Date.parse(now.strftime("%Y-%m-%d"))
-        print(current_date)
-        print(type(current_date))
-        print(self.due_date)
-        print(type(self.due_date))
         if self.due_date.__le__(current_date):
             self.activate_create_instance()
 
+    def calculate_new_due_date(self):
+        if self.repeats == "Daily":
+            if int(self.frequency) == 0 or int(self.frequency) == 1:
+                return self.get_due_date().__add__(1)
+            else:
+                return self.get_due_date() + \
+                    timedelta(days=int(self.frequency))
+            
     #TODO refactor this method and create copy and create task new method
     def create_recurring_instance(self, is_subtask, parent=None):
         if is_subtask:
@@ -300,7 +304,8 @@ class Task(TreeNode):
         task.set_text(self.get_text())
         task.set_start_date(self.get_start_date())
         #TODO calculate new due date depending on the recurrence details.
-        task.set_due_date(self.get_due_date())
+        new_duedate = self.calculate_new_due_date()
+        task.set_due_date(new_duedate)
         task.set_endon_date(self.get_endon_date())
 
         #fire all recrrence methods
