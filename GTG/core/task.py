@@ -21,6 +21,7 @@
 task.py contains the Task class which represents (guess what) a task
 """
 from datetime import datetime, timedelta
+import calendar
 import cgi
 import re
 import uuid
@@ -280,6 +281,13 @@ class Task(TreeNode):
         if self.due_date.__le__(current_date):
             self.activate_create_instance()
 
+    def add_months(self, sourcedate, months):
+        month = sourcedate.month - 1 + months
+        year = int(sourcedate.year + month / 12)
+        month = month % 12 + 1
+        day = min(sourcedate.day,calendar.monthrange(year,month)[1])
+        return Date.parse(str(year)+str(month)+str(day))
+
     def calculate_new_due_date(self):
         if self.repeats == "Daily":
             if int(self.frequency) == 0 or int(self.frequency) == 1:
@@ -287,6 +295,25 @@ class Task(TreeNode):
             else:
                 return self.get_due_date() + \
                     timedelta(days=int(self.frequency))
+        elif self.repeats == "Weekly":
+            if int(self.frequency) == 0:
+                return self.get_due_date() + \
+                    timedelta(weeks=1)
+            else:
+                return self.get_due_date() + \
+                    timedelta(weeks=int(self.frequency))
+        elif self.repeats == "Monthly":
+            if int(self.frequency) == 0:
+                return self.add_months(self.get_due_date(), 1)
+            else:
+                return self.add_months(
+                    self.get_due_date().date(), int(self.frequency))
+        elif self.repeats == "Yearly":
+            if int(self.frequency) == 0:
+                return self.add_months(self.due_date(), 12)
+            else:
+                return self.add_months(
+                    self.get_due_date(), 12 * int(self.frequency))
             
     #TODO refactor this method and create copy and create task new method
     def create_recurring_instance(self, is_subtask, parent=None):
