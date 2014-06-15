@@ -159,7 +159,7 @@ class Requester(GObject.GObject):
         #Skip overdue tasks
         for task_id in tasks:
             task = tasktree.get_node(task_id)
-            if task.recurringtask == "True" and task.days_left() >=0:
+            if task.recurringtask == "True" and task.get_days_left() >=0:
                 task.validate_task()
 
     def get_all_recurring_instances(self, tid):
@@ -174,6 +174,22 @@ class Requester(GObject.GObject):
                 rtid.append(task_id)
         return rtid
 
+    def get_rid_count(self, tid):
+        rtid = []
+        active_tasks  = self.get_tasks_tree('active', False).get_all_nodes()
+        closed_tasks  = self.get_tasks_tree('closed', False).get_all_nodes()
+        tasktree = self.get_main_view()
+        temp = tasktree.get_node(tid)
+        for task_id in active_tasks:
+            task = tasktree.get_node(task_id)
+            if task.rid == temp.rid:
+                rtid.append(task_id)
+        for task_id in closed_tasks:
+            task = tasktree.get_node(task_id)
+            if task.rid == temp.rid:
+                rtid.append(task_id)
+        return rtid
+        
     ############### Tags ##########################
     ###############################################
     def get_tag_tree(self):

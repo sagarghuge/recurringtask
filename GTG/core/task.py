@@ -281,21 +281,30 @@ class Task(TreeNode):
         now = datetime.now()
         return Date.parse(now.strftime("%Y-%m-%d"))
     
-    def validate_task(self):
+    def validate_task(self, status=None):
         current_date = self.get_current_date ()
         if self.endson == "never":  #Never
             # Don't set DONE status
-            if self.due_date.__le__(current_date):
+            if self.due_date.__lt__(current_date):
+                self.activate_create_instance()
+            elif status == self.STA_DONE:
                 self.activate_create_instance()
         elif self.endson == "date":  #On
             # Send DONE status on the given date
             if self.get_endon_date().__eq__(current_date):
                 self.set_status(self.STA_DONE)
-            elif self.due_date.__le__(current_date):
+            elif self.due_date.__lt__(current_date):
+                self.activate_create_instance()
+            elif self.due_date.__lt__(self.endon_date):
                 self.activate_create_instance()
         elif self.endson == "occurrence" or self.endson == "occurrences":  #After
             #Send DONE status after the given occurrence
-            pass
+            #get count of task having same rid
+            done_occurrences = self.req.get_rid_count(self.tid)
+            if len(done_occurrences) < int(self.occurrences):
+                self.activate_create_instance()
+            else:
+                self.set_status(self.STA_DONE)    
 
     def add_months(self, sourcedate, months):
         month = sourcedate.month - 1 + months
@@ -365,7 +374,7 @@ class Task(TreeNode):
     def do_prior_status_setting(self, status):
         if status in [self.STA_DONE, self.STA_DISMISSED]:
             if self.recurringtask == "True":
-                self.activate_create_instance() 
+                self.validate_task(status)
 
     def activate_create_instance(self):
         for task in self.get_self_and_all_subtasks():
@@ -574,9 +583,7 @@ class Task(TreeNode):
         if not new_endondate_obj.is_fuzzy():
             # if the task's start date happens later than the
             # new endon date, we update it (except for fuzzy dates)
-            if not self.get_start_date().is_fuzzy() and \
-                    self.get_start_date() > new_endondate_obj:
-                self.set_start_date(new_endondate)
+            #We should show it in red. 
             # we must apply the constraints to the defined & non-fuzzy children
             # as well
             for sub in __get_defined_child_list(self):
@@ -584,10 +591,7 @@ class Task(TreeNode):
                 # if the child's start date happens later than
                 # the task's new endon date, we update it
                 # (except for fuzzy start dates)
-                sub_startdate = sub.get_start_date()
-                if not sub_startdate.is_fuzzy() and \
-                        sub_startdate > new_endondate_obj:
-                    sub.set_start_date(new_endondate)
+                #We should show it in red.
         # If the date changed, we notify the change for the children since the
         # constraints might have changed
         if old_endon_date != new_endondate_obj:
