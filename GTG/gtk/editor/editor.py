@@ -434,8 +434,16 @@ class TaskEditor(object):
 
     def date_changed(self, widget, data):
         try:
-            Date.parse(widget.get_text())
-            valid = True
+            if data == GTGCalendar.DATE_KIND_ENDON:
+                if Date.parse(widget.get_text()):
+                    if Date.parse(self.startdate_widget.get_text()).__gt__(
+                        Date.parse(widget.get_text())):
+                        valid = False
+                    else:
+                        valid = True
+            else:
+                Date.parse(widget.get_text())
+                valid = True
         except ValueError:
             valid = False
 
