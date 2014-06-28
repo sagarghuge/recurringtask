@@ -135,6 +135,8 @@ class Task(TreeNode):
         if self.endson is not None:
             if self.endson == "occurrence" or self.endson == "occurrences":
                 return str(self.occurrences)
+            elif self.endson == "date":
+                return self.endon_date
             else:
                 return str(self.endson)
 
@@ -275,11 +277,25 @@ class Task(TreeNode):
             self.set_due_date(due_date)
             self.set_start_date(defer_date)
 
-    def validate_task(self):
+    def get_current_date(self):
         now = datetime.now()
-        current_date = Date.parse(now.strftime("%Y-%m-%d"))
-        if self.due_date.__le__(current_date):
-            self.activate_create_instance()
+        return Date.parse(now.strftime("%Y-%m-%d"))
+    
+    def validate_task(self):
+        current_date = self.get_current_date ()
+        if self.endson == "never":  #Never
+            # Don't set DONE status
+            if self.due_date.__le__(current_date):
+                self.activate_create_instance()
+        elif self.endson == "date":  #On
+            # Send DONE status on the given date
+            if self.get_endon_date().__eq__(current_date):
+                self.set_status(self.STA_DONE)
+            elif self.due_date.__le__(current_date):
+                self.activate_create_instance()
+        elif self.endson == "occurrence" or self.endson == "occurrences":  #After
+            #Send DONE status after the given occurrence
+            pass
 
     def add_months(self, sourcedate, months):
         month = sourcedate.month - 1 + months
@@ -290,8 +306,9 @@ class Task(TreeNode):
 
     def calculate_new_due_date(self):
         if self.repeats == "Daily":
-            if int(self.frequency) == 0 or int(self.frequency) == 1:
-                return self.get_due_date().__add__(1)
+            if int(self.frequency) == 0:
+                return self.get_due_date() + \
+                    timedelta(days=1)
             else:
                 return self.get_due_date() + \
                     timedelta(days=int(self.frequency))
@@ -497,11 +514,6 @@ class Task(TreeNode):
             if not self.get_start_date().is_fuzzy() and \
                     self.get_start_date() > new_duedate_obj:
                 self.set_start_date(new_duedate)
-            # if the task's endon date happens later than the
-            # new due date, we update it (except for fuzzy dates)
-            if not self.get_endon_date().is_fuzzy() and \
-                    self.get_endon_date() > new_duedate_obj:
-                self.set_endon_date(new_duedate)
             # if some ancestors' due dates happen before the task's new
             # due date, we update them (except for fuzzy dates)
             for par in __get_defined_parent_list(self):
@@ -565,24 +577,10 @@ class Task(TreeNode):
             if not self.get_start_date().is_fuzzy() and \
                     self.get_start_date() > new_endondate_obj:
                 self.set_start_date(new_endondate)
-            # if the task's due date happens before than the
-            # new endon date, we update it (except for fuzzy dates)
-            if not self.get_due_date().is_fuzzy() and \
-                    self.get_due_date() < new_endondate_obj:
-                self.set_due_date(new_endondate)
-            # if some ancestors' due dates happen before the task's new
-            # endon date, we update them (except for fuzzy dates)
-            for par in __get_defined_parent_list(self):
-                if par.get_due_date() < new_endondate_obj:
-                    par.set_due_date(new_endondate)
             # we must apply the constraints to the defined & non-fuzzy children
             # as well
             for sub in __get_defined_child_list(self):
                 sub_duedate = sub.get_due_date()
-                # if the child's due date happens later than the task's: we
-                # update it to the task's new endon date
-                if sub_duedate > new_endondate_obj:
-                    sub.set_due_date(new_endondate)
                 # if the child's start date happens later than
                 # the task's new endon date, we update it
                 # (except for fuzzy start dates)

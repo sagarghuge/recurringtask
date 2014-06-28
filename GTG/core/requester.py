@@ -156,9 +156,10 @@ class Requester(GObject.GObject):
     def validate_recurring_tasks(self):
         tasks  = self.get_tasks_tree('active', False).get_all_nodes()
         tasktree = self.get_main_view()
+        #Skip overdue tasks
         for task_id in tasks:
             task = tasktree.get_node(task_id)
-            if task.recurringtask == "True":
+            if task.recurringtask == "True" and task.days_left() >=0:
                 task.validate_task()
 
     def get_all_recurring_instances(self, tid):
